@@ -1,106 +1,110 @@
-# EmotiFy - Application d'Analyse d'Émotions avec Gemini AI
+# EmotiFy - Emotion Analysis Application with Gemini AI
 
-EmotiFy est une application web qui permet aux utilisateurs d'analyser les émotions présentes dans un texte grâce à l'intelligence artificielle de Google Gemini.
+EmotiFy is a web application that allows users to analyze the emotions present in a text using Google Gemini's artificial intelligence.
 
-## Fonctionnalités
+## Features
 
-- Interface épurée et responsive
-- Zone de saisie de texte
-- Analyse des émotions avec Gemini AI de Google
-- Visualisation des résultats avec des graphiques colorés (camembert/barres)
-- Historique des analyses
-- Export PDF des résultats
-- API publique avec clé d'accès
+- Clean and responsive interface  
+- Text input area  
+- Emotion analysis with Google Gemini AI  
+- Result visualization with colorful charts (pie/bar)  
+- Analysis history  
+- PDF export of results  
+- Public API with access key  
 
-## Technologies utilisées
-
-### Frontend
-
-- React avec Vite
-- Tailwind CSS pour le style
-- Recharts pour les visualisations
-- React Router pour la navigation
-- Axios pour les requêtes HTTP
-
-### Backend
-
-- Node.js avec Express
-- PostgreSQL via Supabase
-- Gemini AI de Google pour l'analyse des émotions
-
-## Installation et démarrage
-
-### Prérequis
-
-- Node.js (v14 ou supérieur)
-- npm ou yarn
-- Compte Supabase
-- Clé API Gemini (Google AI Studio)
+## Technologies Used
 
 ### Frontend
 
-1. Accédez au dossier frontend :
-
-```bash
-cd frontend
-```
-
-2. Installez les dépendances :
-
-```bash
-npm install
-```
-
-3. Créez un fichier .env à la racine du dossier frontend avec :
-
-```
-VITE_API_URL=http://localhost:3001/api
-```
-
-4. Démarrez le serveur de développement :
-
-```bash
-npm run dev
-```
+- React with Vite  
+- Tailwind CSS for styling  
+- Recharts for data visualization  
+- React Router for navigation  
+- Axios for HTTP requests  
 
 ### Backend
 
-1. Accédez au dossier backend :
+- Node.js with Express  
+- PostgreSQL via Supabase  
+- Google Gemini AI for emotion analysis  
 
-```bash
-cd backend
-```
+## Installation and Startup
 
-2. Installez les dépendances :
+### Prerequisites
 
-```bash
-npm install
-```
-
-3. Créez un fichier .env à la racine du dossier backend avec :
-
-```
-PORT=3001
-GEMINI_API_KEY=votre_clé_api_gemini
-SUPABASE_CONNECTION_STRING=votre_chaîne_de_connexion_supabase
-```
-
-4. Démarrez le serveur :
-
-```bash
-npm run dev
-```
-
-## Déploiement
+- Node.js (v14 or higher)  
+- npm or yarn  
+- Supabase account  
+- Gemini API key (Google AI Studio)  
 
 ### Frontend
 
-Le frontend peut être déployé sur Vercel, Netlify ou tout autre service d'hébergement statique.
+1. Navigate to the frontend folder:
+
+    ```bash
+    cd frontend
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Create a `.env` file at the root of the frontend folder with:
+
+    ```
+    VITE_API_URL=http://localhost:3001/api
+    ```
+
+4. Start the development server:
+
+    ```bash
+    npm run dev
+    ```
 
 ### Backend
 
-Le backend peut être déployé sur Vercel, Heroku ou tout autre service d'hébergement pour Node.js.
+1. Navigate to the backend folder:
 
-## Licence
+    ```bash
+    cd backend
+    ```
 
-Ce projet est sous licence MIT.
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Create a `.env` file at the root of the backend folder with:
+
+    ```
+    PORT=3001
+    GEMINI_API_KEY=your_gemini_api_key
+    SUPABASE_CONNECTION_STRING=your_supabase_connection_string
+    ```
+
+4. Start the server:
+
+    ```bash
+    npm run dev
+    ```
+
+## Deployment
+
+### Frontend
+
+The frontend can be deployed on Vercel, Netlify, or any other static hosting service.
+
+### Backend
+
+The backend can be deployed on Vercel, Heroku, or any other Node.js hosting service.
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+**Developed by Badie Bahida**
