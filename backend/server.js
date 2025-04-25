@@ -82,8 +82,8 @@ async function analyzeEmotionsWithGemini(textInput) {
       "fear": 0.02,
       "surprise": 0.03
     }
-    
     Inclus uniquement les émotions suivantes si elles sont présentes: joy, sadness, anger, fear, surprise, disgust, neutral, love, admiration, approval, caring, confusion, curiosity, desire, disappointment, disapproval, embarrassment, excitement, gratitude, grief, nervousness, optimism, pride, realization, relief, remorse, annoyance, amusement.
+	sommme de valeur doit etre 1 chaque valeur represent un probability 
     `;
 
 		const result = await model.generateContent(prompt);
