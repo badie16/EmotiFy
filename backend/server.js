@@ -60,7 +60,6 @@ async function initDatabase() {
 
 // Fonction pour analyser les émotions avec Gemini AI
 async function analyzeEmotionsWithGemini(textInput) {
-	console.log("zdef");
 	try {
 		// Utiliser le modèle Gemini Pro
 		const model = genAI.getGenerativeModel({

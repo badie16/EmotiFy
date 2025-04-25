@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import TextAnalyzer from '../components/TextAnalyzer'
-import EmotionChart from '../components/EmotionChart'
-import { saveAnalysis } from '../api/emotionService'
-import { exportToPdf } from '../utils/exportPdf'
+import { useState } from "react";
+import TextAnalyzer from "../components/TextAnalyzer";
+import EmotionChart from "../components/EmotionChart";
+import { saveAnalysis } from "../api/emotionService";
+import { exportToPdf } from "../utils/exportPdf";
 
 function Home() {
-  const [analysisResult, setAnalysisResult] = useState(null)
-  const [originalText, setOriginalText] = useState('')
-  
-  const handleAnalysisComplete = (result) => {
-    setAnalysisResult(result.emotions)
-    setOriginalText(result.text)
-    
-    // Sauvegarder l'analyse dans l'historique
-    saveAnalysis({
-      text: result.text,
-      emotions: result.emotions,
-      timestamp: new Date().toISOString()
-    })
-  }
-  
-  const handleExportPdf = () => {
-    if (analysisResult) {
-      exportToPdf({
-        text: originalText,
-        emotions: analysisResult,
-        timestamp: new Date().toISOString()
-      })
-    }
-  }
-  
-  return (
+	const [analysisResult, setAnalysisResult] = useState(null);
+	const [originalText, setOriginalText] = useState("");
+
+	const handleAnalysisComplete = (result) => {
+		setAnalysisResult(result.emotions);
+		setOriginalText(result.text);
+
+		// Sauvegarder l'analyse dans l'historique
+		saveAnalysis({
+			text: result.text,
+			emotions: result.emotions,
+			timestamp: new Date().toISOString(),
+		});
+	};
+
+	const handleExportPdf = () => {
+		if (analysisResult) {
+			exportToPdf({
+				text: originalText,
+				emotions: analysisResult,
+				timestamp: new Date().toISOString(),
+			});
+		}
+	};
+
+	return (
 		<div>
 			<section className="mb-10">
 				<div className="text-center mb-8">
@@ -76,4 +76,4 @@ function Home() {
 	);
 }
 
-export default Home
+export default Home;
