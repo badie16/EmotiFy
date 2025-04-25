@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 function Header() {
-  return (
+	return (
 		<header className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md">
 			<div className="container mx-auto px-4 py-4 flex justify-between items-center">
 				<Link to="/" className="text-2xl font-bold flex items-center">
@@ -11,7 +11,7 @@ function Header() {
 					<ul className="flex space-x-6">
 						<li>
 							<Link to="/" className="hover:text-indigo-200 transition-colors">
-								Accueil
+								Home
 							</Link>
 						</li>
 						{/* <li>
@@ -24,7 +24,7 @@ function Header() {
 								to="/about"
 								className="hover:text-indigo-200 transition-colors"
 							>
-								À propos
+								About
 							</Link>
 						</li>
 					</ul>
@@ -34,4 +34,4 @@ function Header() {
 	);
 }
 
-export default Header
+export default Header;
