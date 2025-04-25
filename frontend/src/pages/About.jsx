@@ -26,10 +26,10 @@ function About() {
 			<div className="bg-white rounded-lg shadow-md p-8 mb-8">
 				<h2 className="text-2xl font-semibold mb-4">Technology</h2>
 				<p className="text-gray-700 mb-4">
-					EmotiFy uses the GoEmotions model from Hugging Face, a natural
-					language processing model specifically designed for emotion detection.
-					This model was trained on a large corpus of manually annotated texts
-					to recognize over 27 different emotion categories.
+					EmotiFy uses Google's Gemini AI, an advanced language model capable of
+					analyzing and understanding emotional nuances in text. This
+					cutting-edge technology allows us to provide precise and detailed
+					analysis of the emotions present in your texts.
 				</p>
 				<p className="text-gray-700 mb-4">Our application is built with:</p>
 				<ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
@@ -45,8 +45,7 @@ function About() {
 						Supabase
 					</li>
 					<li>
-						<span className="font-medium">NLP API:</span> Hugging Face Inference
-						API
+						<span className="font-medium">API NLP:</span> Google's Gemini AI
 					</li>
 				</ul>
 			</div>
