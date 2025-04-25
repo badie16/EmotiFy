@@ -44,7 +44,7 @@ function Footer() {
 
 			<div className=" border-gray-700 text-center text-gray-400">
 				<p>
-					&copy; {new Date().getFullYear()} EmotiFy. Tous droits réservés.
+					&copy; {new Date().getFullYear()} EmotiFy | badie bahida. Tous droits réservés.
 				</p>
 			</div>
 			{/* </div> */}
