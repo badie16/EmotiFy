@@ -10,6 +10,10 @@ export async function exportToPdf(analysisData) {
 	const { text, emotions, timestamp } = analysisData;
 	const doc = new jsPDF();
 
+	// Importer la police arabe (ex: Amiri) — fichier externe
+	import("./fonts/Amiri-Regular.js"); // doit contenir addFileToVFS et addFont
+	doc.addFont("Amiri-Regular.ttf", "Amiri", "normal");
+
 	// Titre
 	doc.setFontSize(20);
 	doc.text("EmotiFy - Analyse d'émotions", 105, 15, { align: "center" });
@@ -24,8 +28,21 @@ export async function exportToPdf(analysisData) {
 	doc.setFontSize(12);
 
 	// Gérer le texte long avec des sauts de ligne
-	const textLines = doc.splitTextToSize(text, 170);
-	doc.text(textLines, 20, 45);
+	let textLines;
+	// doc.text(textLines, 20, 45);
+
+	const hasArabic = /[\u0600-\u06FF]/.test(text);
+	doc.setFontSize(12);
+
+	if (hasArabic) {
+		doc.setFont("Amiri", "normal");
+		textLines = doc.splitTextToSize(text, 170);
+		doc.text(textLines, 190, 45, { align: "right" });
+	} else {
+		doc.setFont("helvetica", "normal");
+		textLines = doc.splitTextToSize(text, 170);
+		doc.text(textLines, 20, 45);
+	}
 
 	// Calculer la position Y après le texte
 	let yPos = 45 + textLines.length * 7;

@@ -34,7 +34,7 @@ function TextAnalyzer({ onAnalysisComplete }) {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <textarea
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full p-3 border outline-none border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             rows="5"
             placeholder="Entrez votre texte ici..."
             value={text}
