@@ -1,12 +1,12 @@
-# EmotiFy - Application d'Analyse d'Émotions
+# EmotiFy - Application d'Analyse d'Émotions avec Gemini AI
 
-EmotiFy est une application web qui permet aux utilisateurs d'analyser les émotions présentes dans un texte grâce à l'intelligence artificielle.
+EmotiFy est une application web qui permet aux utilisateurs d'analyser les émotions présentes dans un texte grâce à l'intelligence artificielle de Google Gemini.
 
 ## Fonctionnalités
 
 - Interface épurée et responsive
 - Zone de saisie de texte
-- Analyse des émotions avec le modèle GoEmotions de Hugging Face
+- Analyse des émotions avec Gemini AI de Google
 - Visualisation des résultats avec des graphiques colorés (camembert/barres)
 - Historique des analyses
 - Export PDF des résultats
@@ -26,7 +26,7 @@ EmotiFy est une application web qui permet aux utilisateurs d'analyser les émot
 
 - Node.js avec Express
 - PostgreSQL via Supabase
-- Hugging Face Inference API pour l'analyse des émotions
+- Gemini AI de Google pour l'analyse des émotions
 
 ## Installation et démarrage
 
@@ -35,61 +35,60 @@ EmotiFy est une application web qui permet aux utilisateurs d'analyser les émot
 - Node.js (v14 ou supérieur)
 - npm ou yarn
 - Compte Supabase
-- Compte Hugging Face (pour la clé API)
+- Clé API Gemini (Google AI Studio)
 
 ### Frontend
 
 1. Accédez au dossier frontend :
-
-```bash
-cd frontend
-```
+   \`\`\`bash
+   cd frontend
+   \`\`\`
 
 2. Installez les dépendances :
-
-```bash
-npm install
-```
+   \`\`\`bash
+   npm install
+   \`\`\`
 
 3. Créez un fichier .env à la racine du dossier frontend avec :
-
-```
-VITE_API_URL=http://localhost:3001/api
-```
+   \`\`\`
+   VITE_API_URL=http://localhost:3001/api
+   \`\`\`
 
 4. Démarrez le serveur de développement :
-
-```bash
-npm run dev
-```
+   \`\`\`bash
+   npm run dev
+   \`\`\`
 
 ### Backend
 
 1. Accédez au dossier backend :
-
-```bash
-cd backend
-```
+   \`\`\`bash
+   cd backend
+   \`\`\`
 
 2. Installez les dépendances :
-
-```bash
-npm install
-```
+   \`\`\`bash
+   npm install
+   \`\`\`
 
 3. Créez un fichier .env à la racine du dossier backend avec :
-
-```
-PORT=3001
-HUGGING_FACE_API_KEY=votre_clé_api_hugging_face
-SUPABASE_CONNECTION_STRING=votre_chaîne_de_connexion_supabase
-```
+   \`\`\`
+   PORT=3001
+   GEMINI_API_KEY=votre_clé_api_gemini
+   SUPABASE_CONNECTION_STRING=votre_chaîne_de_connexion_supabase
+   \`\`\`
 
 4. Démarrez le serveur :
+   \`\`\`bash
+   npm run dev
+   \`\`\`
 
-```bash
-npm run dev
-```
+## Obtenir une clé API Gemini
+
+1. Visitez [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Connectez-vous avec votre compte Google
+3. Créez une nouvelle clé API
+4. Copiez cette clé dans votre fichier .env
 
 ## Déploiement
 
@@ -99,8 +98,8 @@ Le frontend peut être déployé sur Vercel, Netlify ou tout autre service d'hé
 
 ### Backend
 
-Le backend peut être déployé sur Render, Heroku ou tout autre service d'hébergement pour Node.js.
+Le backend peut être déployé sur Vercel, Heroku ou tout autre service d'hébergement pour Node.js.
 
 ## Licence
 
-Ce projet est sous licence MIT.
+Ce projet est sous licence MIT.;
