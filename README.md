@@ -40,55 +40,56 @@ EmotiFy est une application web qui permet aux utilisateurs d'analyser les émot
 ### Frontend
 
 1. Accédez au dossier frontend :
-   \`\`\`bash
-   cd frontend
-   \`\`\`
+
+```bash
+cd frontend
+```
 
 2. Installez les dépendances :
-   \`\`\`bash
-   npm install
-   \`\`\`
+
+```bash
+npm install
+```
 
 3. Créez un fichier .env à la racine du dossier frontend avec :
-   \`\`\`
-   VITE_API_URL=http://localhost:3001/api
-   \`\`\`
+
+```
+VITE_API_URL=http://localhost:3001/api
+```
 
 4. Démarrez le serveur de développement :
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+
+```bash
+npm run dev
+```
 
 ### Backend
 
 1. Accédez au dossier backend :
-   \`\`\`bash
-   cd backend
-   \`\`\`
+
+```bash
+cd backend
+```
 
 2. Installez les dépendances :
-   \`\`\`bash
-   npm install
-   \`\`\`
+
+```bash
+npm install
+```
 
 3. Créez un fichier .env à la racine du dossier backend avec :
-   \`\`\`
-   PORT=3001
-   GEMINI_API_KEY=votre_clé_api_gemini
-   SUPABASE_CONNECTION_STRING=votre_chaîne_de_connexion_supabase
-   \`\`\`
+
+```
+PORT=3001
+GEMINI_API_KEY=votre_clé_api_gemini
+SUPABASE_CONNECTION_STRING=votre_chaîne_de_connexion_supabase
+```
 
 4. Démarrez le serveur :
-   \`\`\`bash
-   npm run dev
-   \`\`\`
 
-## Obtenir une clé API Gemini
-
-1. Visitez [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Connectez-vous avec votre compte Google
-3. Créez une nouvelle clé API
-4. Copiez cette clé dans votre fichier .env
+```bash
+npm run dev
+```
 
 ## Déploiement
 
@@ -102,4 +103,4 @@ Le backend peut être déployé sur Vercel, Heroku ou tout autre service d'hébe
 
 ## Licence
 
-Ce projet est sous licence MIT.;
+Ce projet est sous licence MIT.
