@@ -1,6 +1,6 @@
-# MoodMirror - Application d'Analyse d'Émotions
+# EmotiFy - Application d'Analyse d'Émotions
 
-MoodMirror est une application web qui permet aux utilisateurs d'analyser les émotions présentes dans un texte grâce à l'intelligence artificielle.
+EmotiFy est une application web qui permet aux utilisateurs d'analyser les émotions présentes dans un texte grâce à l'intelligence artificielle.
 
 ## Fonctionnalités
 

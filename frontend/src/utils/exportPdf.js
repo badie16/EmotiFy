@@ -12,7 +12,7 @@ export async function exportToPdf(analysisData) {
   
   // Titre
   doc.setFontSize(20)
-  doc.text('MoodMirror - Analyse d\'émotions', 105, 15, { align: 'center' })
+  doc.text("EmotiFy - Analyse d'émotions", 105, 15, { align: "center" });
   
   // Date
   doc.setFontSize(12)
@@ -61,13 +61,13 @@ export async function exportToPdf(analysisData) {
     doc.setPage(i)
     doc.setFontSize(10)
     doc.text(
-      'MoodMirror - Analyse d\'émotions par IA',
-      105,
-      doc.internal.pageSize.height - 10,
-      { align: 'center' }
-    )
+			"EmotiFy - Analyse d'émotions par IA",
+			105,
+			doc.internal.pageSize.height - 10,
+			{ align: "center" }
+		);
   }
   
   // Sauvegarder le PDF
-  doc.save(`moodmirror-analyse-${new Date().toISOString().slice(0, 10)}.pdf`)
+  doc.save(`EmotiFy-analyse-${new Date().toISOString().slice(0, 10)}.pdf`);
 }

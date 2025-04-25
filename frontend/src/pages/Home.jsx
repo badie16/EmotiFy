@@ -34,7 +34,7 @@ function Home() {
     <div>
       <section className="mb-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">MoodMirror</h1>
+          <h1 className="text-3xl font-bold mb-2">EmotiFy</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Découvrez les émotions cachées dans vos textes grâce à notre analyse avancée basée sur l'intelligence artificielle.
           </p>

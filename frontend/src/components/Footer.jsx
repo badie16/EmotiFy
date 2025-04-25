@@ -4,7 +4,7 @@ function Footer() {
 			{/* <div className="container mx-auto px-4"> */}
 			{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4">MoodMirror</h3>
+            <h3 className="text-lg font-semibold mb-4">EmotiFy</h3>
             <p className="text-gray-300">
               Analysez les émotions dans vos textes grâce à l'intelligence artificielle.
             </p>
@@ -36,15 +36,15 @@ function Footer() {
             <p className="text-gray-300">
               Vous avez des questions ou des suggestions ?
             </p>
-            <a href="mailto:contact@moodmirror.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-              contact@moodmirror.com
+            <a href="mailto:contact@EmotiFy.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+              contact@EmotiFy.com
             </a>
           </div>
         </div> */}
 
 			<div className=" border-gray-700 text-center text-gray-400">
 				<p>
-					&copy; {new Date().getFullYear()} MoodMirror. Tous droits réservés.
+					&copy; {new Date().getFullYear()} EmotiFy. Tous droits réservés.
 				</p>
 			</div>
 			{/* </div> */}
