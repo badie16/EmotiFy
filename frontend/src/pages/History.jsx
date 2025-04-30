@@ -1,4 +1,4 @@
-import HistoryList from '../components/HistoryList'
+import HistoryList from "../components/HistoryList"
 
 function History() {
   return (
@@ -9,7 +9,7 @@ function History() {
           Consultez l'historique de vos analyses d'émotions précédentes.
         </p>
       </div>
-      
+
       <HistoryList />
     </div>
   )

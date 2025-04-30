@@ -10,17 +10,31 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   margin: 0;
   padding: 0;
 }
 
-.emotion-joy { color: #10b981; }
-.emotion-sadness { color: #3b82f6; }
-.emotion-anger { color: #ef4444; }
-.emotion-fear { color: #8b5cf6; }
-.emotion-surprise { color: #f59e0b; }
-.emotion-disgust { color: #84cc16; }
-.emotion-neutral { color: #6b7280; }
+.emotion-joy {
+  color: #10b981;
+}
+.emotion-sadness {
+  color: #3b82f6;
+}
+.emotion-anger {
+  color: #ef4444;
+}
+.emotion-fear {
+  color: #8b5cf6;
+}
+.emotion-surprise {
+  color: #f59e0b;
+}
+.emotion-disgust {
+  color: #84cc16;
+}
+.emotion-neutral {
+  color: #6b7280;
+}

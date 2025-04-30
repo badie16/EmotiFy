@@ -1,8 +1,8 @@
 function Footer() {
-	return (
-		<footer className="bg-gray-800 text-white py-4">
-			{/* <div className="container mx-auto px-4"> */}
-			{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  return (
+    <footer className="bg-gray-800 text-white py-4">
+      {/* <div className="container mx-auto px-4"> */}
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">EmotiFy</h3>
             <p className="text-gray-300">
@@ -42,15 +42,12 @@ function Footer() {
           </div>
         </div> */}
 
-			<div className=" border-gray-700 text-center text-gray-400">
-				<p>
-					&copy; {new Date().getFullYear()} EmotiFy | badie bahida. All rights
-					reserved.
-				</p>
-			</div>
-			{/* </div> */}
-		</footer>
-	);
+      <div className=" border-gray-700 text-center text-gray-400">
+        <p>&copy; {new Date().getFullYear()} EmotiFy. All rights reserved.</p>
+      </div>
+      {/* </div> */}
+    </footer>
+  )
 }
 
-export default Footer;
+export default Footer

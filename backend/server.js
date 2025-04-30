@@ -1,8 +1,19 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Pool } from "pg";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// Routes
+import textRoutes from "./routes/text-analysis.js";
+import voiceRoutes from "./routes/voice-analysis.js";
+import faceRoutes from "./routes/face-analysis.js";
+import socialRoutes from "./routes/social-analysis.js";
+import chatRoutes from "./routes/chat-analysis.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import userRoutes from "./routes/users.js";
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -10,36 +21,108 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Configuration du stockage pour les fichiers uploadés
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.join(__dirname, "uploads");
 
-// Configuration de Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Créer le dossier uploads s'il n'existe pas
+if (!fs.existsSync(uploadsDir)) {
+	fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-// Configuration de la base de données Supabase
-const pool = new Pool({
-	connectionString: process.env.SUPABASE_CONNECTION_STRING,
-	ssl: {
-		rejectUnauthorized: false,
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, uploadsDir);
+	},
+	filename: (req, file, cb) => {
+		const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+		cb(
+			null,
+			file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+		);
 	},
 });
 
-// Vérifier la connexion à la base de données
-// pool.connect((err, client, release) => {
-// 	if (err) {
-// 		console.error("Erreur de connexion à la base de données:", err);
-// 	} else {
-// 		console.log("Connexion à la base de données établie");
-// 		release();
-// 	}
-// });
+const upload = multer({ storage: storage });
 
-// Créer la table pour l'historique si elle n'existe pas
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use("/uploads", express.static(uploadsDir));
+
+// Variables pour les services AI et DB
+let genAI = null;
+let pool = null;
+
+// Configuration conditionnelle de Gemini AI
+try {
+	if (process.env.GEMINI_API_KEY) {
+		const { GoogleGenerativeAI } = await import("@google/generative-ai");
+		genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+		console.log("Service Gemini AI configuré avec succès");
+	} else {
+		console.log(
+			"Clé API Gemini non configurée. Le service d'analyse émotionnelle sera limité."
+		);
+	}
+} catch (error) {
+	console.error("Erreur lors de la configuration de Gemini AI:", error);
+}
+
+// Configuration conditionnelle de la base de données
+try {
+	if (process.env.SUPABASE_CONNECTION_STRING) {
+		const { Pool } = await import("pg");
+		pool = new Pool({
+			connectionString: process.env.SUPABASE_CONNECTION_STRING,
+			ssl: {
+				rejectUnauthorized: false,
+			},
+		});
+
+		// Vérifier la connexion à la base de données
+		pool.connect((err, client, release) => {
+			if (err) {
+				console.error("Erreur de connexion à la base de données:", err);
+				console.log(
+					"L'application fonctionnera en mode local sans persistance des données."
+				);
+			} else {
+				console.log("Connexion à la base de données établie");
+				release();
+
+				// Initialiser la base de données
+				initDatabase().catch((error) => {
+					console.error(
+						"Erreur lors de l'initialisation de la base de données:",
+						error
+					);
+				});
+			}
+		});
+	} else {
+		console.log(
+			"Chaîne de connexion Supabase non configurée. L'application fonctionnera en mode local sans persistance des données."
+		);
+	}
+} catch (error) {
+	console.error(
+		"Erreur lors de la configuration de la base de données:",
+		error
+	);
+	console.log(
+		"L'application fonctionnera en mode local sans persistance des données."
+	);
+}
+
+// Initialiser la base de données
 async function initDatabase() {
+	if (!pool) return;
+
 	try {
+		// Table pour l'analyse de texte
 		await pool.query(`
-      CREATE TABLE IF NOT EXISTS emotion_analysis (
+      CREATE TABLE IF NOT EXISTS text_analysis (
         id SERIAL PRIMARY KEY,
         text TEXT NOT NULL,
         emotions JSONB NOT NULL,
@@ -47,7 +130,66 @@ async function initDatabase() {
         user_id TEXT
       )
     `);
-		console.log("Table emotion_analysis initialisée");
+
+		// Table pour l'analyse vocale
+		await pool.query(`
+      CREATE TABLE IF NOT EXISTS voice_analysis (
+        id SERIAL PRIMARY KEY,
+        file_path TEXT NOT NULL,
+        emotions JSONB NOT NULL,
+        timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_id TEXT
+      )
+    `);
+
+		// Table pour l'analyse faciale
+		await pool.query(`
+      CREATE TABLE IF NOT EXISTS face_analysis (
+        id SERIAL PRIMARY KEY,
+        file_path TEXT NOT NULL,
+        emotions JSONB NOT NULL,
+        timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_id TEXT
+      )
+    `);
+
+		// Table pour l'analyse des réseaux sociaux
+		await pool.query(`
+      CREATE TABLE IF NOT EXISTS social_analysis (
+        id SERIAL PRIMARY KEY,
+        platform TEXT NOT NULL,
+        content TEXT NOT NULL,
+        emotions JSONB NOT NULL,
+        timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_id TEXT
+      )
+    `);
+
+		// Table pour l'analyse des chats
+		await pool.query(`
+      CREATE TABLE IF NOT EXISTS chat_analysis (
+        id SERIAL PRIMARY KEY,
+        conversation TEXT NOT NULL,
+        emotions JSONB NOT NULL,
+        flags JSONB,
+        timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        user_id TEXT
+      )
+    `);
+
+		// Table pour les utilisateurs
+		await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        auth_id TEXT UNIQUE,
+        username TEXT,
+        email TEXT UNIQUE,
+        profile_data JSONB,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+		console.log("Base de données initialisée avec succès");
 	} catch (error) {
 		console.error(
 			"Erreur lors de l'initialisation de la base de données:",
@@ -56,152 +198,45 @@ async function initDatabase() {
 	}
 }
 
-// initDatabase();
+// Partager les ressources avec les routes
+app.locals.pool = pool;
+app.locals.genAI = genAI;
+app.locals.upload = upload;
+app.locals.uploadsDir = uploadsDir;
 
-// Fonction pour analyser les émotions avec Gemini AI
-async function analyzeEmotionsWithGemini(textInput) {
-	try {
-		// Utiliser le modèle Gemini Pro
-		const model = genAI.getGenerativeModel({
-			model: "models/gemini-1.5-flash",
-		});
-
-		// Prompt pour l'analyse des émotions
-		const prompt =
-			`
-    Analyse le texte suivant et identifie les émotions présentes avec leur intensité sur une échelle de 0 à 1.
-    Texte: ` +
-			textInput +
-			`
-    
-    Réponds uniquement avec un objet JSON contenant les émotions détectées et leur score, comme cet exemple:
-    {
-      "joy": 0.8,
-      "sadness": 0.1,
-      "anger": 0.05,
-      "fear": 0.02,
-      "surprise": 0.03
-    }
-    Inclus uniquement les émotions suivantes si elles sont présentes: joy, sadness, anger, fear, surprise, disgust, neutral, love, admiration, approval, caring, confusion, curiosity, desire, disappointment, disapproval, embarrassment, excitement, gratitude, grief, nervousness, optimism, pride, realization, relief, remorse, annoyance, amusement.
-	sommme de valeur doit etre 1 chaque valeur represent un probability 
-    `;
-
-		const result = await model.generateContent(prompt);
-		const response = await result.response;
-		const text = response.text();
-
-		// Extraire l'objet JSON de la réponse
-		console.log("Réponse brute de Gemini:", text);
-
-		const jsonMatch = text.match(/{[\s\S]*}/);
-
-		if (jsonMatch) {
-			return JSON.parse(jsonMatch[0]);
-		} else {
-			throw new Error("Format de réponse invalide");
-		}
-	} catch (error) {
-		console.error("Erreur lors de l'analyse avec Gemini:", error);
-		throw error;
-	}
-}
-
-// Route pour analyser les émotions
-app.post("/api/analyze", async (req, res) => {
-	try {
-		const { text } = req.body;
-
-		if (!text) {
-			return res.status(400).json({ error: "Le texte est requis" });
-		}
-
-		// Analyser les émotions avec Gemini AI
-		const emotions = await analyzeEmotionsWithGemini(text);
-
-		// Renvoyer les résultats
-		res.json({
-			text,
-			emotions,
-			timestamp: new Date().toISOString(),
-		});
-	} catch (error) {
-		console.error("Erreur lors de l'analyse des émotions:", error);
-		res.status(500).json({ error: "Erreur lors de l'analyse des émotions" });
-	}
+// Route temporaire pour la compatibilité avec le frontend
+// Cette route redirige vers la route correcte /api/text/analyze
+app.post("/api/analyze", (req, res) => {
+	console.log("Redirection de /api/analyze vers /api/text/analyze");
+	// Transférer la requête à la route correcte
+	req.url = "/api/text/analyze";
+	app._router.handle(req, res);
 });
 
-// Route pour sauvegarder une analyse dans l'historique
-// app.post("/api/history", async (req, res) => {
-// 	try {
-// 		const { text, emotions, timestamp, userId } = req.body;
+// Routes API
+app.use("/api/text", textRoutes);
+app.use("/api/voice", voiceRoutes);
+app.use("/api/face", faceRoutes);
+app.use("/api/social", socialRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/users", userRoutes);
 
-// 		const result = await pool.query(
-// 			"INSERT INTO emotion_analysis (text, emotions, timestamp, user_id) VALUES ($1, $2, $3, $4) RETURNING id",
-// 			[text, emotions, timestamp, userId || null]
-// 		);
-
-// 		res.status(201).json({
-// 			id: result.rows[0].id,
-// 			message: "Analyse sauvegardée avec succès",
-// 		});
-// 	} catch (error) {
-// 		console.error("Erreur lors de la sauvegarde de l'analyse:", error);
-// 		res
-// 			.status(500)
-// 			.json({ error: "Erreur lors de la sauvegarde de l'analyse" });
-// 	}
-// });
-
-// // Route pour récupérer l'historique des analyses
-// app.get("/api/history", async (req, res) => {
-// 	try {
-// 		const { userId } = req.query;
-
-// 		let query = "SELECT * FROM emotion_analysis";
-// 		let params = [];
-
-// 		if (userId) {
-// 			query += " WHERE user_id = $1";
-// 			params.push(userId);
-// 		}
-
-// 		query += " ORDER BY timestamp DESC";
-
-// 		const result = await pool.query(query, params);
-
-// 		res.json(result.rows);
-// 	} catch (error) {
-// 		console.error("Erreur lors de la récupération de l'historique:", error);
-// 		res
-// 			.status(500)
-// 			.json({ error: "Erreur lors de la récupération de l'historique" });
-// 	}
-// });
-
-// // Route pour supprimer une analyse de l'historique
-// app.delete("/api/history/:id", async (req, res) => {
-// 	try {
-// 		const { id } = req.params;
-
-// 		const result = await pool.query(
-// 			"DELETE FROM emotion_analysis WHERE id = $1 RETURNING id",
-// 			[id]
-// 		);
-
-// 		if (result.rowCount === 0) {
-// 			return res.status(404).json({ error: "Analyse non trouvée" });
-// 		}
-
-// 		res.json({ message: "Analyse supprimée avec succès" });
-// 	} catch (error) {
-// 		console.error("Erreur lors de la suppression de l'analyse:", error);
-// 		res
-// 			.status(500)
-// 			.json({ error: "Erreur lors de la suppression de l'analyse" });
-// 	}
-// });
+// Route de test
+app.get("/api/health", (req, res) => {
+	res.json({
+		status: "ok",
+		message: "EmotiFy API is running",
+		database: pool ? "connected" : "disconnected",
+		ai: genAI ? "configured" : "not configured",
+	});
+});
 
 // Démarrer le serveur
 app.listen(PORT, () => {
 	console.log(`Serveur démarré sur le port ${PORT}`);
+	console.log(`API de test disponible sur http://localhost:${PORT}/api/health`);
+	console.log(
+		`Mode de fonctionnement: ${!pool || !genAI ? "dégradé" : "complet"}`
+	);
 });
