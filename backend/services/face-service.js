@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-const PYTHON_VISION_API_URL = process.env.PYTHON_VISION_API_URL || 'http://localhost:5001/detect';
+const PYTHON_VISION_API_URL = process.env.PYTHON_VISION_API_URL || 'http://localhost:5001/api/face/detect';
 
 // Configuration de multer pour générer des noms de fichiers uniques
 const storage = multer.diskStorage({

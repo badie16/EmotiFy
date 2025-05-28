@@ -1,17 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 import tensorflow as tf
 import cv2
 import numpy as np
-
-app = Flask(__name__)
-
-# --- PARAMÈTRES  ---
-MODEL_PATH = 'mon_modele_emotions.h5'
+print("app_emotion_api.py est importé et exécuté !")
+# --- PARAMÈTRES ---
+MODEL_PATH = './face/mon_modele_emotions.h5'
 IMG_SIZE = (48, 48)
 COLOR_MODE = 'grayscale'
 EMOTION_LABELS = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
 HAAR_CASCADE_PATH = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-# ------------------------------------
+
+# --- Initialisation ---
+emotion_api = Blueprint('emotion_api', __name__)
 
 # Charger le modèle et le classificateur
 try:
@@ -36,12 +36,14 @@ def preprocess_face(face_img):
     return target_img
 
 def detect_emotions(image_bytes):
+    print("detect_emotions")
     if not model or face_cascade.empty():
         return {"error": "Modèle ou classificateur non prêt."}
 
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    if img is None: return {"error": "Image invalide."}
+    if img is None:
+        return {"error": "Image invalide."}
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray_img, 1.1, 4)
@@ -54,7 +56,7 @@ def detect_emotions(image_bytes):
         results.append({"box": [int(x), int(y), int(w), int(h)], "emotions": emotion_scores})
     return results
 
-@app.route('/detect', methods=['POST'])
+@emotion_api.route('/detect', methods=['POST'])
 def detect_route():
     if 'image' not in request.files:
         return jsonify({"error": "Aucun fichier 'image' trouvé."}), 400
@@ -67,6 +69,3 @@ def detect_route():
         return jsonify(detections)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001) # Port pour l'API Python
