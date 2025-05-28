@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["libglvnd"]
+aptPkgs = ["libgl1", "libglib2.0-0"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[phases.build]
+cmds = ["echo 'build done'"]
+
+[start]
+cmd = "python app.py"
+
+
