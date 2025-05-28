@@ -18,7 +18,8 @@ import { emotionColors } from "../utils/colors"
 
 function EmotionChart({ emotions }) {
   const [chartType, setChartType] = useState("pie")
-
+  console.log("dd")
+  console.log(emotions)
   // Préparer les données pour les graphiques
   const data = Object.entries(emotions)
     .map(([name, score]) => ({
@@ -26,7 +27,6 @@ function EmotionChart({ emotions }) {
       value: Math.round(score * 100),
     }))
     .sort((a, b) => b.value - a.value)
-
   // Filtrer pour n'afficher que les émotions avec une valeur significative
   const filteredData = data.filter((item) => item.value > 1)
 
@@ -37,17 +37,15 @@ function EmotionChart({ emotions }) {
         <div className="flex space-x-2">
           <button
             onClick={() => setChartType("pie")}
-            className={`px-3 py-1 rounded-md ${
-              chartType === "pie" ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-3 py-1 rounded-md ${chartType === "pie" ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
           >
             Camembert
           </button>
           <button
             onClick={() => setChartType("bar")}
-            className={`px-3 py-1 rounded-md ${
-              chartType === "bar" ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-3 py-1 rounded-md ${chartType === "bar" ? "bg-indigo-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
           >
             Barres
           </button>

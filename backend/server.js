@@ -215,13 +215,15 @@ app.post("/api/analyze", (req, res) => {
 
 // Routes API
 app.use("/api/text", textRoutes);
-app.use("/api/voice", voiceRoutes);
+app.use("api/voice", voiceRoutes);
 app.use("/api/face", faceRoutes);
+
+
+
 app.use("/api/social", socialRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/users", userRoutes);
-
 // Route de test
 app.get("/api/health", (req, res) => {
 	res.json({

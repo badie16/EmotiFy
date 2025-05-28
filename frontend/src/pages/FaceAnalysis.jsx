@@ -1,17 +1,66 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import FaceAnalyzer from "../components/face/FaceAnalyzer"
 import EmotionChart from "../components/EmotionChart"
 
 function FaceAnalysis() {
   const [analysisResult, setAnalysisResult] = useState(null)
-  const [imagePath, setImagePath] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [detectionBox, setDetectionBox] = useState(null)
+  const resultCanvasRef = useRef(null)
+
+  // Dessiner le rectangle de détection sur l'image des résultats
+  const drawDetectionBox = (imageElement, box) => {
+    if (!imageElement || !box || !resultCanvasRef.current) return;
+
+    const canvas = resultCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    canvas.width = imageElement.width;
+    canvas.height = imageElement.height;
+
+    // Dessiner l'image
+    ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+
+    // Dessiner le rectangle de détection
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(
+      box.x * canvas.width,
+      box.y * canvas.height,
+      box.width * canvas.width,
+      box.height * canvas.height
+    );
+  };
 
   const handleAnalysisComplete = (result) => {
-    setAnalysisResult(result.emotions)
-    setImagePath(result.filePath)
+    console.log(result)
+    const rawEmotions = result?.emotions?.[0]?.emotions || {}
+    console.log(rawEmotions)
+
+    const remapped = {
+      joy: rawEmotions.happy || 0,
+      sadness: rawEmotions.sad || 0,
+      anger: rawEmotions.angry || 0,
+      fear: rawEmotions.fear || 0,
+      surprise: rawEmotions.surprise || 0,
+      neutral: rawEmotions.neutral || 0,
+    }
+    setAnalysisResult(remapped)
+    setImagePreview(result.imagePreview)
+    setDetectionBox(result.emotions?.[0]?.box || null)
   }
+
+  // Effet pour dessiner la boîte de détection quand elle change
+  useEffect(() => {
+    if (imagePreview && detectionBox) {
+      const img = new Image();
+      img.onload = () => {
+        drawDetectionBox(img, detectionBox);
+      };
+      img.src = imagePreview;
+    }
+  }, [imagePreview, detectionBox]);
 
   return (
     <div>
@@ -46,10 +95,13 @@ function FaceAnalysis() {
             <h2 className="text-xl font-semibold mb-4">Résultats de l'analyse</h2>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {imagePath && (
+              {imagePreview && (
                 <div>
                   <h3 className="font-medium text-gray-700 mb-2">Image analysée :</h3>
-                  <img src={`/uploads/${imagePath}`} alt="Image analysée" className="w-full rounded-lg shadow-md" />
+                  <canvas
+                    ref={resultCanvasRef}
+                    className="w-full rounded-lg shadow-md"
+                  />
                 </div>
               )}
 

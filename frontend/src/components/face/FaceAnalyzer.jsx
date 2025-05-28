@@ -39,61 +39,79 @@ function FaceAnalyzer({ onAnalysisComplete }) {
 
     setIsAnalyzing(true)
     setError("")
-
     try {
       let response
 
       if (isWebcamMode) {
-        // Capturer l'image de la webcam
-        const canvas = document.createElement("canvas")
-        canvas.width = videoRef.current.videoWidth
-        canvas.height = videoRef.current.videoHeight
-        const ctx = canvas.getContext("2d")
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height)
+        // Capturer l'image de la webcam en format carré
+        const video = videoRef.current;
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+
+        // Calculer les coordonnées pour centrer l'image
+        const x = (video.videoWidth - size) / 2;
+        const y = (video.videoHeight - size) / 2;
+
+        // Dessiner l'image carrée centrée
+        ctx.drawImage(video, x, y, size, size, 0, 0, size, size);
 
         // Convertir en base64
-        const imageData = canvas.toDataURL("image/jpeg")
-
+        const imageData = canvas.toDataURL("image/jpeg");
         // Envoyer pour analyse
         response = await axios.post("/api/face/analyze-webcam", {
           imageData,
-        })
+        });
+
+        // Ajouter l'URL de l'image locale à la réponse
+        response.data.imagePreview = imageData;
       } else {
         // Envoyer le fichier image pour analyse
-        const formData = new FormData()
-        formData.append("imageFile", selectedFile)
+        const formData = new FormData();
+        formData.append("imageFile", selectedFile);
 
         response = await axios.post("/api/face/analyze", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
+        });
+
+        // Ajouter l'URL de l'image locale à la réponse
+        response.data.imagePreview = previewURL;
       }
 
       if (onAnalysisComplete) {
-        onAnalysisComplete(response.data)
+        onAnalysisComplete(response.data);
       }
     } catch (err) {
-      console.error("Erreur lors de l'analyse faciale:", err)
-      setError("Une erreur est survenue lors de l'analyse. Veuillez réessayer.")
+      console.error("Erreur lors de l'analyse faciale:", err);
+      setError("Une erreur est survenue lors de l'analyse. Veuillez réessayer.");
     } finally {
-      setIsAnalyzing(false)
+      setIsAnalyzing(false);
     }
-  }
+  };
 
   // Activer la webcam
   const startWebcam = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      videoRef.current.srcObject = stream
-      streamRef.current = stream
-      setIsWebcamActive(true)
-      setError("")
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 300 },
+          height: { ideal: 300 },
+          aspectRatio: 1
+        }
+      });
+      videoRef.current.srcObject = stream;
+      streamRef.current = stream;
+      setIsWebcamActive(true);
+      setError("");
     } catch (err) {
-      console.error("Erreur lors de l'accès à la webcam:", err)
-      setError("Impossible d'accéder à la webcam. Veuillez vérifier les permissions.")
+      console.error("Erreur lors de l'accès à la webcam:", err);
+      setError("Impossible d'accéder à la webcam. Veuillez vérifier les permissions.");
     }
-  }
+  };
 
   // Arrêter la webcam
   const stopWebcam = () => {
@@ -137,9 +155,8 @@ function FaceAnalyzer({ onAnalysisComplete }) {
               onClick={() => {
                 if (isWebcamMode) toggleWebcamMode()
               }}
-              className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                !isWebcamMode ? "bg-indigo-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg ${!isWebcamMode ? "bg-indigo-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
             >
               Télécharger une image
             </button>
@@ -148,9 +165,8 @@ function FaceAnalyzer({ onAnalysisComplete }) {
               onClick={() => {
                 if (!isWebcamMode) toggleWebcamMode()
               }}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                isWebcamMode ? "bg-indigo-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg ${isWebcamMode ? "bg-indigo-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
             >
               Utiliser la webcam
             </button>
@@ -174,7 +190,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
                 </div>
               )}
 
-              <div className="space-x-4">
+              <div className="space-x-4 flex  mt-3 justify-center flex-wrap gap-y-[15px]">
                 <button
                   onClick={() => fileInputRef.current.click()}
                   className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
@@ -210,30 +226,30 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         ) : (
           <div className="flex flex-col items-center">
             <div className="w-full max-w-md bg-gray-100 rounded-lg p-6 flex flex-col items-center">
-              <div className="mb-4 w-full">
+              <div className="mb-4 max-w-sm aspect-square">
                 <video
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  className="w-full h-auto rounded-md"
+                  className="w-full h-full object-cover rounded-md"
                   style={{ display: isWebcamActive ? "block" : "none" }}
                 />
 
                 {!isWebcamActive && (
-                  <div className="w-full h-64 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md">
+                    <div className=" w-64 h-64 mb-4 mx-auto flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md">
                     <span className="text-gray-500">Webcam inactive</span>
                   </div>
                 )}
               </div>
 
-              <div className="space-x-4">
+              <div className="space-x-4 ">
                 {!isWebcamActive ? (
                   <button
                     onClick={startWebcam}
                     className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
                     disabled={isAnalyzing}
                   >
-                    Activer la webcam
+                    Activer webcam
                   </button>
                 ) : (
                   <>
@@ -242,7 +258,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
                       className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
                       disabled={isAnalyzing}
                     >
-                      Désactiver la webcam
+                      Désactiver webcam
                     </button>
 
                     <button

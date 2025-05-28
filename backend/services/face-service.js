@@ -1,41 +1,90 @@
-// Service pour l'analyse des émotions faciales
+import axios from 'axios';
+import multer from 'multer';
+import FormData from 'form-data';
+import fs from 'fs';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Analyse les émotions dans une image faciale
- * @param {string} filePath - Chemin vers le fichier image
- * @returns {Object} - Objet contenant les émotions détectées et leur intensité
- */
-export async function analyzeFaceEmotions(filePath) {
+const PYTHON_VISION_API_URL = process.env.PYTHON_VISION_API_URL || 'http://localhost:5001/detect';
+
+// Configuration de multer pour générer des noms de fichiers uniques
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + uuidv4();
+    cb(null, 'face-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// ---  Upload d'une image ---
+export async function analyzeFace(imagePath) {
+  console.log(`[Vision] Fichier reçu (upload): ${imagePath}`);
   try {
-    // Note: Dans une implémentation réelle, vous utiliseriez une API comme Google Cloud Vision,
-    // Microsoft Azure Face API, ou une autre API spécialisée dans l'analyse faciale.
-    // Pour cet exemple, nous simulons une analyse.
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(imagePath));
+    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
+      headers: { ...formData.getHeaders() },
+    });
 
-    console.log(`Analyse de l'image faciale: ${filePath}`)
-
-    // Simulation d'une analyse faciale
-    // Dans une implémentation réelle, vous enverriez l'image à une API et attendriez le résultat
-    const simulatedEmotions = {
-      joy: Math.random() * 0.6,
-      sadness: Math.random() * 0.3,
-      anger: Math.random() * 0.2,
-      fear: Math.random() * 0.1,
-      surprise: Math.random() * 0.3,
-      disgust: Math.random() * 0.1,
-      neutral: Math.random() * 0.3,
+    // Supprimer l'image après l'analyse
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
     }
 
-    // Normaliser les valeurs pour que la somme soit 1
-    const total = Object.values(simulatedEmotions).reduce((sum, val) => sum + val, 0)
-    const normalizedEmotions = {}
-
-    for (const [emotion, value] of Object.entries(simulatedEmotions)) {
-      normalizedEmotions[emotion] = value / total
-    }
-
-    return normalizedEmotions
+    return {
+      emotions: response.data,
+      filePath: path.basename(imagePath)
+    };
   } catch (error) {
-    console.error("Erreur lors de l'analyse faciale:", error)
-    throw error
+    console.error("[Vision] Erreur (upload):", error.response ? error.response.data : error.message);
+    // En cas d'erreur, on supprime l'image
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    throw new Error(error);
   }
 }
+
+// --- Image depuis la Webcam (Base64) ---
+export async function analyzeFaceWebcam(imageBase64) {
+  if (!imageBase64) {
+    throw new Error('Aucune image Base64 reçue.');
+  }
+  console.log("[Vision] Image Base64 reçue (webcam).");
+  try {
+    const base64Data = imageBase64.replace(/^data:image\/jpeg;base64,/, "");
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    // Sauvegarder l'image de la webcam avec un nom unique
+    const uniqueSuffix = Date.now() + '-' + uuidv4();
+    const webcamPath = path.join('uploads', `webcam-${uniqueSuffix}.jpg`);
+    fs.writeFileSync(webcamPath, imageBuffer);
+
+    const formData = new FormData();
+    formData.append('image', imageBuffer, { filename: 'webcam.jpg', contentType: 'image/jpeg' });
+    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
+      headers: { ...formData.getHeaders() },
+    });
+
+    // Supprimer l'image après l'analyse
+    if (fs.existsSync(webcamPath)) {
+      fs.unlinkSync(webcamPath);
+    }
+
+    return {
+      emotions: response.data,
+      filePath: path.basename(webcamPath)
+    };
+  } catch (error) {
+    console.error("[Vision] Erreur (webcam):", error.response ? error.response.data : error.message);
+    // En cas d'erreur, supprimer l'image si elle existe
+    if (fs.existsSync(webcamPath)) {
+      fs.unlinkSync(webcamPath);
+    }
+    throw new Error("Erreur lors de la détection via webcam.");
+  }
+}
+
+export { upload };
