@@ -1,6 +1,6 @@
 export default function NotFound() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white px-4">
+        <div className="flex flex-col items-center justify-center my-10 text-black  px-4">
             <h1 className="text-9xl font-extrabold mb-4 animate-pulse">404</h1>
             <h2 className="text-3xl font-semibold mb-6">Oups, page non trouvée !</h2>
             <p className="text-lg mb-8 max-w-md text-center">
@@ -12,7 +12,7 @@ export default function NotFound() {
             >
                 Retour à Emotify
             </button>
-            <footer className="mt-12 text-sm opacity-70">© 2025 Emotify</footer>
+            {/* <footer className="mt-12 text-sm opacity-70">© 2025 Emotify</footer> */}
         </div>
     )
 }

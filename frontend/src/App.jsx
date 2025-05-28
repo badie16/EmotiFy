@@ -29,6 +29,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
             <Route path="/about" element={<About />} />
+            {/* Route catch-all à la fin */} 
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

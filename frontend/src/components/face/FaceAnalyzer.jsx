@@ -16,6 +16,32 @@ function FaceAnalyzer({ onAnalysisComplete }) {
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
+  function resizeImage(file, maxSize = 224) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        img.onload = function () {
+          const scale = maxSize / Math.max(img.width, img.height);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], file.name, { type: "image/jpeg" }));
+          }, "image/jpeg", 0.8); // Compression à 80%
+        };
+        img.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Gérer la sélection de fichier
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -70,9 +96,10 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         response.data.imagePreview = imageData;
       } else {
         // Envoyer le fichier image pour analyse
+        const resizedFile = await resizeImage(selectedFile);
         const formData = new FormData();
-        formData.append("imageFile", selectedFile);
-
+        formData.append("imageFile", resizedFile);  
+        
         response = await axios.post(backendUrl + "/api/face/analyze", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
