@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // URL de l'API backend
-const API_URL = import.meta.env.VITE_API_URL || "/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 /**
  * Analyser les émotions dans une conversation de chat
@@ -12,14 +12,14 @@ export async function analyzeChat(conversation) {
 	try {
 		console.log(
 			"Envoi de la requête d'analyse de chat à:",
-			`${API_URL}/chat/analyze`
+			`${API_URL}/api/chat/analyze`
 		);
 		console.log(
 			"Conversation à analyser:",
 			conversation.substring(0, 50) + "..."
 		);
 
-		const response = await axios.post(`${API_URL}/chat/analyze`, {
+		const response = await axios.post(`${API_URL}/api/chat/analyze`, {
 			conversation,
 		});
 
@@ -38,7 +38,7 @@ export async function analyzeChat(conversation) {
  */
 export async function getChatHistory(userId = null) {
 	try {
-		let url = `${API_URL}/chat/history`;
+		let url = `${API_URL}/api/chat/history`;
 		if (userId) {
 			url += `?userId=${userId}`;
 		}
@@ -61,7 +61,7 @@ export async function getChatHistory(userId = null) {
  */
 export async function deleteChatAnalysis(id) {
 	try {
-		const response = await axios.delete(`${API_URL}/chat/${id}`);
+		const response = await axios.delete(`${API_URL}/api/chat/${id}`);
 		return response.data;
 	} catch (error) {
 		console.error("Erreur lors de la suppression de l'analyse de chat:", error);

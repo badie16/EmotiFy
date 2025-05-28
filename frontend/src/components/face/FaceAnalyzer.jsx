@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import axios from "axios"
+const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 function FaceAnalyzer({ onAnalysisComplete }) {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -61,7 +62,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         // Convertir en base64
         const imageData = canvas.toDataURL("image/jpeg");
         // Envoyer pour analyse
-        response = await axios.post("/api/face/analyze-webcam", {
+        response = await axios.post(backendUrl + "/api/face/analyze-webcam", {
           imageData,
         });
 
@@ -72,7 +73,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         const formData = new FormData();
         formData.append("imageFile", selectedFile);
 
-        response = await axios.post("/api/face/analyze", formData, {
+        response = await axios.post(backendUrl + "/api/face/analyze", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -236,7 +237,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
                 />
 
                 {!isWebcamActive && (
-                    <div className=" w-64 h-64 mb-4 mx-auto flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md">
+                  <div className=" w-64 h-64 mb-4 mx-auto flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md">
                     <span className="text-gray-500">Webcam inactive</span>
                   </div>
                 )}
