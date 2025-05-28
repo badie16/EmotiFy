@@ -103,17 +103,7 @@ function Header() {
 								</Link>
 							</li>
 						</ul>
-					</nav>
-
-					{/* Bouton de profil */}
-					<div className="hidden md:block">
-						<Link
-							to="/profile"
-							className="bg-white text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors"
-						>
-							Profil
-						</Link>
-					</div>
+					</nav>					
 				</div>
 
 				{/* Menu mobile déroulant */}
