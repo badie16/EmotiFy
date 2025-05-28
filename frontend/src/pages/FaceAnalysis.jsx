@@ -8,24 +8,21 @@ function FaceAnalysis() {
   const [analysisResult, setAnalysisResult] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [detectionBox, setDetectionBox] = useState(null)
+  const [originalImageSize, setOriginalImageSize] = useState(null)
   const resultCanvasRef = useRef(null)
 
   // Dessiner le rectangle de détection sur l'image des résultats
-  const drawDetectionBox = (imageElement, box) => {
-    if (!imageElement || !box || !resultCanvasRef.current) return;
+  const drawDetectionBox = (imageElement, faces, imageSize) => {
+    if (!imageElement || !faces || !resultCanvasRef.current || !imageSize) return;
 
-    const canvas = resultCanvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const canvas = resultCanvasRef.current; 
+    const ctx = canvas.getContext("2d");
 
-    const originalWidth = imageElement.naturalWidth;
-    const originalHeight = imageElement.naturalHeight;
+    const { width: originalWidth, height: originalHeight } = imageSize;
 
-    // Redimensionnement proportionnel à une hauteur max de 400px
-    const maxHeight = 470;  
-    const minHeight = 400;
+    const maxHeight = 470;
+    const minHeight = 400;    
     const scale = Math.max(minHeight / originalHeight, maxHeight / originalHeight);
-
-
     const scaledWidth = originalWidth * scale;
     const scaledHeight = originalHeight * scale;
 
@@ -35,23 +32,58 @@ function FaceAnalysis() {
     canvas.style.height = `${scaledHeight}px`;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
-
-    // Dessin de la boîte
-    ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(
-      box.x * canvas.width,
-      box.y * canvas.height,
-      box.width * canvas.width,
-      box.height * canvas.height
-    );
+    ctx.drawImage(imageElement, 0, 0, scaledWidth, scaledHeight);
+    ctx.strokeStyle = "#00ff00";
+    ctx.lineWidth = 2;    
+    for (const face of faces) {
+      const [x, y, w, h] = face.box;
+      ctx.strokeRect(
+        x * scale,
+        y * scale,
+        w * scale,
+        h * scale
+      );
+    }
   };
+
 
 
   const handleAnalysisComplete = (result) => {
     console.log(result)
-    const rawEmotions = result?.emotions?.[0]?.emotions || {}
+    // Si plusieurs visages sont détectés, calculer la moyenne des émotions
+    let rawEmotions = {};
+    if (result?.emotions?.faces?.length > 1) {
+      // Initialiser les compteurs pour chaque émotion
+      const emotionSums = {
+        happy: 0,
+        sad: 0,
+        angry: 0,
+        fear: 0,
+        surprise: 0,
+        neutral: 0,
+        disgust: 0
+      };
+
+      // Additionner les scores pour chaque émotion
+      result.emotions.faces.forEach(face => {
+        Object.entries(face.emotions).forEach(([emotion, score]) => {
+          emotionSums[emotion] += score;
+        });
+      });
+
+      // Calculer la moyenne pour chaque émotion
+      const faceCount = result.emotions.faces.length;
+      rawEmotions = Object.fromEntries(
+        Object.entries(emotionSums).map(([emotion, sum]) => [
+          emotion,
+          sum / faceCount
+        ])
+      );
+    } else {
+      // S'il n'y a qu'un seul visage, utiliser directement ses émotions
+      rawEmotions = result?.emotions?.faces?.[0]?.emotions || {};
+    }
+    console.log(rawEmotions)
     const remapped = {
       joy: rawEmotions.happy || 0,
       sadness: rawEmotions.sad || 0,
@@ -62,7 +94,8 @@ function FaceAnalysis() {
     }
     setAnalysisResult(remapped)
     setImagePreview(result.imagePreview)
-    setDetectionBox(result.emotions?.[0]?.box || null)
+    setDetectionBox(result.emotions?.faces   || null)
+    setOriginalImageSize(result.emotions?.imageSize)
   }
 
   // Effet pour dessiner la boîte de détection quand elle change
@@ -70,11 +103,11 @@ function FaceAnalysis() {
     if (imagePreview && detectionBox) {
       const img = new Image();
       img.onload = () => {
-        drawDetectionBox(img, detectionBox);
+        drawDetectionBox(img, detectionBox, originalImageSize);
       };
       img.src = imagePreview;
     }
-  }, [imagePreview, detectionBox]);
+  }, [imagePreview, detectionBox, originalImageSize]);
 
   return (
     <div>
@@ -111,7 +144,7 @@ function FaceAnalysis() {
             <div className="grid md:grid-cols-2 gap-6">
               {imagePreview && (
                 <div >
-                  <h3 className="font-medium text-gray-700 mb-2">Image analysée :</h3>                  
+                  <h3 className="font-medium text-gray-700 mb-2">Image analysée :</h3>
                   <div className="flex justify-center items-center">
                     <canvas ref={resultCanvasRef} className="rounded-lg shadow-md" />
                   </div>

@@ -235,8 +235,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
                   disabled={isAnalyzing}
                 >
                   Sélectionner une image
-                </button>
-
+                </button>              
                 {previewURL && (
                   <>
                     <button

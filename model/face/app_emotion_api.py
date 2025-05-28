@@ -45,6 +45,8 @@ def detect_emotions(image_bytes):
     if img is None:
         return {"error": "Image invalide."}
 
+    original_height, original_width = img.shape[:2]
+
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray_img, 1.1, 4)
     results = []
@@ -53,8 +55,15 @@ def detect_emotions(image_bytes):
         processed_face = preprocess_face(face_roi)
         predictions = model.predict(processed_face)[0]
         emotion_scores = {label: float(score) for label, score in zip(EMOTION_LABELS, predictions)}
-        results.append({"box": [int(x), int(y), int(w), int(h)], "emotions": emotion_scores})
-    return results
+        results.append({
+            "box": [int(x), int(y), int(w), int(h)],
+            "emotions": emotion_scores
+        })
+
+    return {
+        "imageSize": {"width": original_width, "height": original_height},
+        "faces": results
+    }
 
 @emotion_api.route('/detect', methods=['POST'])
 def detect_route():
