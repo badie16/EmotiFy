@@ -1,14 +1,21 @@
+# Installer les dépendances système nécessaires pour OpenCV
 [phases.setup]
 nixPkgs = ["libglvnd"]
 aptPkgs = ["libgl1", "libglib2.0-0"]
 
+# Installer les dépendances Python dans un venv
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python -m venv venv",
+  ". venv/bin/activate",
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
 
+# Build phase facultative
 [phases.build]
 cmds = ["echo 'build done'"]
 
+# Commande de démarrage de ton app Flask
 [start]
-cmd = "python app.py"
-
-
+cmd = ". venv/bin/activate && python app.py"
