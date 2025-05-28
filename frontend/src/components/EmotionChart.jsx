@@ -18,8 +18,6 @@ import { emotionColors } from "../utils/colors"
 
 function EmotionChart({ emotions }) {
   const [chartType, setChartType] = useState("pie")
-  console.log("dd")
-  console.log(emotions)
   // Préparer les données pour les graphiques
   const data = Object.entries(emotions)
     .map(([name, score]) => ({

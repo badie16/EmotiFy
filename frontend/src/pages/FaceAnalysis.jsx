@@ -16,13 +16,28 @@ function FaceAnalysis() {
 
     const canvas = resultCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    canvas.width = imageElement.width;
-    canvas.height = imageElement.height;
 
-    // Dessiner l'image
+    const originalWidth = imageElement.naturalWidth;
+    const originalHeight = imageElement.naturalHeight;
+
+    // Redimensionnement proportionnel à une hauteur max de 400px
+    const maxHeight = 470;  
+    const minHeight = 400;
+    const scale = Math.max(minHeight / originalHeight, maxHeight / originalHeight);
+
+
+    const scaledWidth = originalWidth * scale;
+    const scaledHeight = originalHeight * scale;
+
+    canvas.width = scaledWidth;
+    canvas.height = scaledHeight;
+    canvas.style.width = `${scaledWidth}px`;
+    canvas.style.height = `${scaledHeight}px`;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
 
-    // Dessiner le rectangle de détection
+    // Dessin de la boîte
     ctx.strokeStyle = '#00ff00';
     ctx.lineWidth = 2;
     ctx.strokeRect(
@@ -33,11 +48,10 @@ function FaceAnalysis() {
     );
   };
 
+
   const handleAnalysisComplete = (result) => {
     console.log(result)
     const rawEmotions = result?.emotions?.[0]?.emotions || {}
-    console.log(rawEmotions)
-
     const remapped = {
       joy: rawEmotions.happy || 0,
       sadness: rawEmotions.sad || 0,
@@ -96,12 +110,11 @@ function FaceAnalysis() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {imagePreview && (
-                <div>
-                  <h3 className="font-medium text-gray-700 mb-2">Image analysée :</h3>
-                  <canvas
-                    ref={resultCanvasRef}
-                    className="w-full rounded-lg shadow-md"
-                  />
+                <div >
+                  <h3 className="font-medium text-gray-700 mb-2">Image analysée :</h3>                  
+                  <div className="flex justify-center items-center">
+                    <canvas ref={resultCanvasRef} className="rounded-lg shadow-md" />
+                  </div>
                 </div>
               )}
 

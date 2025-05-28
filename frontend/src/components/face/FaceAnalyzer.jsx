@@ -16,7 +16,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
-  function resizeImage(file, maxSize = 224) {
+  function resizeImagePreservingQuality(file, maxDimension = 1800) {
     return new Promise((resolve) => {
       const img = new Image();
       const canvas = document.createElement("canvas");
@@ -24,16 +24,24 @@ function FaceAnalyzer({ onAnalysisComplete }) {
 
       reader.onload = function (e) {
         img.onload = function () {
-          const scale = maxSize / Math.max(img.width, img.height);
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
+          let { width, height } = img;
+
+          // Ne redimensionner que si c'est vraiment trop grand
+          if (width > maxDimension || height > maxDimension) {
+            const scale = (maxDimension) / Math.max(width, height);
+            width = width * scale;
+            height = height * scale;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
 
           const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
+          ctx.drawImage(img, 0, 0, width, height);
+          // Compression très faible (presque sans perte)
           canvas.toBlob((blob) => {
-            resolve(new File([blob], file.name, { type: "image/jpeg" }));
-          }, "image/jpeg", 0.8); // Compression à 80%
+            resolve(new File([blob], file.name, { type: file.type || "image/png" }));
+          }, file.type || "image/png"); // Compression à 95%
         };
         img.src = e.target.result;
       };
@@ -41,6 +49,7 @@ function FaceAnalyzer({ onAnalysisComplete }) {
       reader.readAsDataURL(file);
     });
   }
+
 
   // Gérer la sélection de fichier
   const handleFileChange = (event) => {
@@ -91,15 +100,14 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         response = await axios.post(backendUrl + "/api/face/analyze-webcam", {
           imageData,
         });
-
         // Ajouter l'URL de l'image locale à la réponse
         response.data.imagePreview = imageData;
       } else {
         // Envoyer le fichier image pour analyse
-        const resizedFile = await resizeImage(selectedFile);
+        const resizedFile = await resizeImagePreservingQuality(selectedFile);
         const formData = new FormData();
-        formData.append("imageFile", resizedFile);  
-        
+        formData.append("imageFile", resizedFile);
+
         response = await axios.post(backendUrl + "/api/face/analyze", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -107,7 +115,9 @@ function FaceAnalyzer({ onAnalysisComplete }) {
         });
 
         // Ajouter l'URL de l'image locale à la réponse
-        response.data.imagePreview = previewURL;
+        const imagePreview = URL.createObjectURL(resizedFile);
+        response.data.imagePreview = imagePreview;
+
       }
 
       if (onAnalysisComplete) {

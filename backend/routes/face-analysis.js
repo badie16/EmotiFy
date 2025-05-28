@@ -1,5 +1,5 @@
 import express from "express";
-import { analyzeFaceBuffer, analyzeFaceWebcam, upload } from "../services/face-service.js";
+import { analyzeFaceBuffer, analyzeFaceWebcam, upload } from "../services/face-service.js"; 
 
 const router = express.Router();
 
