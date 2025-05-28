@@ -1,18 +1,33 @@
+# nixpacks.toml
+
 [phases.setup]
-# Indique à Nixpacks d’installer Python 3, pip et les libs nécessaires à OpenCV
-nixPkgs = ["python3", "libglvnd"]
-aptPkgs = ["libgl1", "libglib2.0-0"]
+# Installe les paquets système nécessaires pour OpenCV via Apt.
+# libgl1-mesa-glx fournit libGL.so.1.
+# libglib2.0-0 est une autre dépendance courante.
+aptPkgs = ["libgl1-mesa-glx", "libglib2.0-0"]
+# Nixpacks détecte généralement Python, mais vous pouvez le spécifier si nécessaire:
+# nixPkgs = ["python3.10"] 
 
 [phases.install]
+# Crée un environnement virtuel et installe les dépendances Python dedans.
+# Notez que nous appelons directement le pip de l'environnement virtuel.
 cmds = [
   "python3 -m venv venv",
-  ". venv/bin/activate",
-  "pip install --upgrade pip",
-  "pip install -r requirements.txt"
+  "venv/bin/pip install --upgrade pip",
+  "venv/bin/pip install -r requirements.txt"
 ]
 
 [phases.build]
-cmds = ["echo 'build done'"]
+# Si vous avez des étapes de build (ex: collecte de fichiers statiques),
+# ajoutez-les ici. Sinon, cette phase peut être omise.
+cmds = ["echo 'Aucune étape de build nécessaire.'"]
 
 [start]
-cmd = ". venv/bin/activate && python app.py"
+# Lance votre application en utilisant l'interpréteur Python de l'environnement virtuel.
+# Assurez-vous que 'app.py' est le nom correct de votre fichier principal Flask.
+cmd = "venv/bin/python app.py"
+
+# --- OU (Recommandé pour la production) ---
+# Si vous utilisez Gunicorn (assurez-vous qu'il est dans requirements.txt):
+# Remplacez 'app:app' par 'votre_fichier:votre_instance_flask'.
+# cmd = "venv/bin/gunicorn app:app --bind 0.0.0.0:$PORT"
