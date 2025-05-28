@@ -66,8 +66,7 @@ Pygments==2.19.1
 pyparsing==3.2.3
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
-pytz==2025.2
-pywin32==310
+pytz
 pyzmq==26.4.0
 requests==2.32.3
 retina-face==0.0.17
