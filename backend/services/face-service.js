@@ -1,88 +1,65 @@
 import axios from 'axios';
 import multer from 'multer';
 import FormData from 'form-data';
-import fs from 'fs';
-import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 const PYTHON_VISION_API_URL = process.env.PYTHON_VISION_API_URL || 'https://emotify-production.up.railway.app/api/face/detect';
 
-// Configuration de multer pour générer des noms de fichiers uniques
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + uuidv4();
-    cb(null, 'face-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// 📦 Configuration de multer en mémoire
+const upload = multer({ storage: multer.memoryStorage() });
 
-const upload = multer({ storage: storage });
-
-// ---  Upload d'une image ---
-export async function analyzeFace(imagePath) {
-  console.log(`[Vision] Fichier reçu (upload): ${imagePath}`);
+// 📷 Analyse d’une image reçue (upload via formulaire)
+export async function analyzeFaceBuffer(fileBuffer, originalname, mimetype) {
+  console.log(`[Vision] Image reçue: ${originalname}`);
   try {
     const formData = new FormData();
-    formData.append('image', fs.createReadStream(imagePath));
-    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
-      headers: { ...formData.getHeaders() },
+    formData.append('image', fileBuffer, {
+      filename: originalname,
+      contentType: mimetype,
     });
 
-    // Supprimer l'image après l'analyse
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
+      headers: formData.getHeaders(),
+    });
 
     return {
       emotions: response.data,
-      filePath: path.basename(imagePath)
+      fileName: originalname,
     };
   } catch (error) {
-    console.error("[Vision] Erreur (upload):", error.response ? error.response.data : error.message);
-    // En cas d'erreur, on supprime l'image
-    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-    throw new Error(error);
+    console.error("[Vision] Erreur (upload):", error.response?.data || error.message);
+    throw new Error("Erreur lors de l'analyse de l'image.");
   }
 }
 
-// --- Image depuis la Webcam (Base64) ---
+// 🎥 Analyse d’une image Base64 (webcam)
 export async function analyzeFaceWebcam(imageBase64) {
-  if (!imageBase64) {
-    throw new Error('Aucune image Base64 reçue.');
-  }
+  if (!imageBase64) throw new Error('Aucune image Base64 reçue.');
+
   console.log("[Vision] Image Base64 reçue (webcam).");
+
   try {
-    const base64Data = imageBase64.replace(/^data:image\/jpeg;base64,/, "");
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
     const imageBuffer = Buffer.from(base64Data, 'base64');
 
-    // Sauvegarder l'image de la webcam avec un nom unique
-    const uniqueSuffix = Date.now() + '-' + uuidv4();
-    const webcamPath = path.join('uploads', `webcam-${uniqueSuffix}.jpg`);
-    fs.writeFileSync(webcamPath, imageBuffer);
+    const uniqueName = 'webcam-' + Date.now() + '-' + uuidv4() + '.jpg';
 
     const formData = new FormData();
-    formData.append('image', imageBuffer, { filename: 'webcam.jpg', contentType: 'image/jpeg' });
-    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
-      headers: { ...formData.getHeaders() },
+    formData.append('image', imageBuffer, {
+      filename: uniqueName,
+      contentType: 'image/jpeg',
     });
 
-    // Supprimer l'image après l'analyse
-    if (fs.existsSync(webcamPath)) {
-      fs.unlinkSync(webcamPath);
-    }
+    const response = await axios.post(PYTHON_VISION_API_URL, formData, {
+      headers: formData.getHeaders(),
+    });
 
     return {
       emotions: response.data,
-      filePath: path.basename(webcamPath)
+      fileName: uniqueName,
     };
   } catch (error) {
-    console.error("[Vision] Erreur (webcam):", error.response ? error.response.data : error.message);
-    // En cas d'erreur, supprimer l'image si elle existe
-    if (fs.existsSync(webcamPath)) {
-      fs.unlinkSync(webcamPath);
-    }
+    console.error("[Vision] Erreur (webcam):", error.response?.data || error.message);
     throw new Error("Erreur lors de la détection via webcam.");
   }
 }
