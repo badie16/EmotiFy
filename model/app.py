@@ -10,6 +10,10 @@ app = Flask(__name__)
 # Enregistrer le blueprint
 app.register_blueprint(emotion_api, url_prefix='/api/face')
 
+@app.route('/api/health')
+def health_check():
+    return {"status": "OK"}, 200
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get("PORT", 5000))
