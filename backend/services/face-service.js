@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 const PYTHON_VISION_API_URL = process.env.PYTHON_VISION_API_URL || 'https://emotify-production.up.railway.app/api/face/detect';
 
 
-// 📦 Configuration de multer en mémoire
+//  Configuration de multer en mémoire
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 📷 Analyse d’une image reçue (upload via formulaire)
+//  Analyse d’une image reçue (upload via formulaire)
 export async function analyzeFaceBuffer(fileBuffer, originalname, mimetype) {
   console.log(`[Vision] Image reçue: ${originalname}`);
   try {

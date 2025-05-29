@@ -12,14 +12,14 @@ router.post("/analyze", async (req, res) => {
     if (err || !req.file) {
       return res.status(400).json({ error: "Erreur lors de l'upload du fichier audio" })
     }
-
     const inputPath = req.file.path
     const userId = req.body.userId || null
 
     try {
       const wavPath = await convertWebmToWav(inputPath)
+      
       const emotions = await analyzeVoiceEmotions(wavPath)
-
+      
       // Nettoyage
     
       fs.unlinkSync(inputPath)

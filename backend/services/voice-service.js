@@ -5,7 +5,7 @@ import fs from 'fs'; // Pour lire le fichier audio depuis le système de fichier
 import path from 'path'; // Pour manipuler les chemins de fichiers
 
 // URL de votre API Flask (assurez-vous qu'elle est correcte et accessible)
-const FLASK_API_URL = 'https://emotify-production.up.railway.app/api/audio/predict_audio_emotion'; // Ajustez le port si nécessaire
+const PYTHON_VOICE_API_URL = process.env.PYTHON_VOICE_API_URL || 'https://emotify-production.up.railway.app/api/audio/predict_audio_emotion'; // Ajustez le port si nécessaire
 
 /**
  * Analyse les émotions dans un fichier audio en appelant l'API Flask.
@@ -34,10 +34,10 @@ export async function analyzeVoiceEmotions(filePath) {
     // 'audio_file' est le nom du champ attendu par l'API Flask
     formData.append('audio_file', fs.createReadStream(filePath), path.basename(filePath));
 
-    console.log(`Envoi du fichier à l'API Flask : ${FLASK_API_URL}`);
-
+    console.log(`Envoi du fichier à l'API Flask : ${PYTHON_VOICE_API_URL}`);
+    
     // Effectuer la requête POST vers l'API Flask
-    const response = await axios.post(FLASK_API_URL, formData, {
+    const response = await axios.post(PYTHON_VOICE_API_URL, formData, {
       headers: {
         ...formData.getHeaders(), // Important pour définir Content-Type: multipart/form-data avec la bonne boundary
       },
