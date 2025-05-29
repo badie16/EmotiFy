@@ -16,43 +16,41 @@ function FaceAnalyzer({ onAnalysisComplete }) {
   const fileInputRef = useRef(null)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
-
-  const path = window.location.origin
   const exampleImages = [
     {
       id: 1,
       name: "Exemple Joyeux",
-      url: path + "/src/public/example/visage/happy.png",
+      url: "/example/visage/happy.png",
       description: "Un visage exprimant de la joie"
     },
     {
       id: 2,
       name: "Exemple Angry",
-      url: path + "/src/public/example/visage/angry.png",
+      url: "/example/visage/angry.png",
       description: "Un visage exprimant de la colère"
     },
     {
       id: 3,
       name: "Exemple Fear",
-      url: path + "/src/public/example/visage/fear.png",
+      url: "/example/visage/fear.png",
       description: "Un visage exprimant la peur"
     },
     {
       id: 4,
       name: "Exemple Mix",
-      url: path + "/src/public/example/visage/angry2.png",
+      url: "/example/visage/angry2.png",
       description: "Un visage exprimant la colère et la tristesse"
     },
     {
       id: 5,
       name: "Exemple Sadness",
-      url: path + "/src/public/example/visage/sad.png",
+      url: "/example/visage/sad.png",
       description: "Un visage exprimant la tristesse"
     }, 
     {
       id: 6,
       name: "Exemple Disgust",
-      url: path + "/src/public/example/visage/disgust.png",
+      url: "/example/visage/disgust.png",
       description: "Un visage exprimant la dégoût"
     },
    

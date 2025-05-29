@@ -17,30 +17,29 @@ function VoiceRecorder({ onAnalysisComplete }) {
   const audioChunksRef = useRef([])
 
   // Liste des exemples d'enregistrements
-  const path = window.location.origin
   const exampleRecordings = [
     {
       id: 1,
       name: "Exemple Surprised",
-      url: path + "/src/public/example/voice/happy.wav",
+      url: "/example/voice/happy.wav",
       description: "Une voix exprimant de la surprise"
     },
     {
       id: 2,
       name: "Exemple Triste",
-      url: path + "/src/public/example/voice/sad.wav",
+      url:  "/example/voice/sad.wav",
       description: "Une voix exprimant de la tristesse"
     },
     {
       id: 3,
       name: "Exemple Neutre",
-      url: path + "/src/public/example/voice/neutral.wav",
+      url: "/example/voice/neutral.wav",
       description: "Une voix neutre"
     },
     {
       id: 4,
       name: "Exemple Angry",
-      url: path + "/src/public/example/voice/angry1.wav",
+      url: "/example/voice/angry1.wav",
       description: "Une voix exprimant de l'agressivité"
     }
 
