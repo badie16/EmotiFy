@@ -5,7 +5,7 @@ import fs from 'fs'; // Pour lire le fichier audio depuis le système de fichier
 import path from 'path'; // Pour manipuler les chemins de fichiers
 
 // URL de votre API Flask (assurez-vous qu'elle est correcte et accessible)
-const FLASK_API_URL = 'http://localhost:5000/api/audio/predict_audio_emotion'; // Ajustez le port si nécessaire
+const FLASK_API_URL = 'https://emotify-production.up.railway.app/api/audio/predict_audio_emotion'; // Ajustez le port si nécessaire
 
 /**
  * Analyse les émotions dans un fichier audio en appelant l'API Flask.
