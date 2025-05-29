@@ -35,7 +35,7 @@ export async function analyzeVoiceEmotions(filePath) {
     formData.append('audio_file', fs.createReadStream(filePath), path.basename(filePath));
 
     console.log(`Envoi du fichier à l'API Flask : ${PYTHON_VOICE_API_URL}`);
-    
+
     // Effectuer la requête POST vers l'API Flask
     const response = await axios.post(PYTHON_VOICE_API_URL, formData, {
       headers: {

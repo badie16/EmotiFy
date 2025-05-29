@@ -11,9 +11,55 @@ function VoiceRecorder({ onAnalysisComplete }) {
   const [audioURL, setAudioURL] = useState("")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState("")
+  const [showExamples, setShowExamples] = useState(false)
 
   const mediaRecorderRef = useRef(null)
   const audioChunksRef = useRef([])
+
+  // Liste des exemples d'enregistrements
+  const path = window.location.origin
+  const exampleRecordings = [
+    {
+      id: 1,
+      name: "Exemple Surprised",
+      url: path + "/src/public/example/voice/happy.wav",
+      description: "Une voix exprimant de la surprise"
+    },
+    {
+      id: 2,
+      name: "Exemple Triste",
+      url: path + "/src/public/example/voice/sad.wav",
+      description: "Une voix exprimant de la tristesse"
+    },
+    {
+      id: 3,
+      name: "Exemple Neutre",
+      url: path + "/src/public/example/voice/neutral.wav",
+      description: "Une voix neutre"
+    },
+    {
+      id: 4,
+      name: "Exemple Angry",
+      url: path + "/src/public/example/voice/angry1.wav",
+      description: "Une voix exprimant de l'agressivité"
+    }
+
+
+  ]
+
+  const loadExample = async (exampleUrl) => {
+    try {
+      setError("")
+      const response = await fetch(exampleUrl)
+      const blob = await response.blob()
+      setAudioBlob(blob)
+      setAudioURL(URL.createObjectURL(blob))
+      setShowExamples(false) // Ferme la modale après le chargement
+    } catch (err) {
+      console.error("Erreur lors du chargement de l'exemple:", err)
+      setError("Impossible de charger l'exemple. Veuillez réessayer.")
+    }
+  }
 
   const startRecording = async () => {
     try {
@@ -76,37 +122,44 @@ function VoiceRecorder({ onAnalysisComplete }) {
       const rawEmotions = response.data.emotions.emotion_scores;
       if (onAnalysisComplete) {
         const remapped = {
-          joy: rawEmotions.happy || 0,
-          sadness: rawEmotions.sad || 0,
-          anger: rawEmotions.angry || 0,
-          fear: rawEmotions.fear || 0,
-          // surprise: rawEmotions.surprise || 0,
-          neutral: rawEmotions.neutral || 0,
+          joy: rawEmotions.Happy || 0,
+          sadness: rawEmotions.Sad || 0,
+          anger: rawEmotions.Angry || 0,
+          disgust: rawEmotions.Disgust || 0,
+          fear: rawEmotions.Fear || 0,
+          surprise: rawEmotions.Surprised || 0,
+          neutral: rawEmotions.Neutral || 0,
         }
-
-        //   object : {
-        //   "id": 1,
-        //     "filePath": "1748523845372.wav",
-        //       "emotions": {
-        //     "emotion_scores": {
-        //       "angry": 0.9999998807907104,
-        //         "fear": 2.222892182823788e-11,
-        //           "happy": 4.649990809069138e-11,
-        //             "neutral": 6.97009880368249e-11,
-        //               "sad": 7.439525262498137e-8
-        //     },
-        //     "predicted_emotion": "angry",
-        //       "predicted_index": 0,
-        //         "raw_prediction_vector": [
-        //           0.9999998807907104,
-        //           2.222892182823788e-11,
-        //           4.649990809069138e-11,
-        //           6.97009880368249e-11,
-        //           7.439525262498137e-8
-        //         ]
-        //   },
-        //   "timestamp": "2025-05-29T13:04:05.961Z"
-        // }
+      
+        /**
+        data: {
+    "id": 1,
+    "filePath": "1748533565953.wav",
+    "emotions": {
+        "emotion_scores": {
+            "Angry": 0.00012397313548717648,
+            "Disgust": 0.00024080263392534107,
+            "Fear": 1.6695355498086428e-7,
+            "Happy": 0.0000024777646103757434,
+            "Neutral": 1.317548452561823e-7,
+            "Sad": 1.8135800416985148e-8,
+            "Surprised": 0.9996324777603149
+        },
+        "predicted_emotion": "Surprised",
+        "predicted_index": 5,
+        "raw_prediction_vector": [
+            0.00012397313548717648,
+            1.6695355498086428e-7,
+            0.00024080263392534107,
+            0.0000024777646103757434,
+            1.8135800416985148e-8,
+            0.9996324777603149,
+            1.317548452561823e-7
+        ]
+    },
+    "timestamp": "2025-05-29T15:46:14.756Z"
+          }
+      */
         console.log("emotionSums", remapped)
         onAnalysisComplete(remapped)
       }
@@ -133,7 +186,7 @@ function VoiceRecorder({ onAnalysisComplete }) {
         </p>
 
         <div className="flex flex-col items-center">
-          <div className="w-full max-w-md bg-gray-100 rounded-lg p-6 flex flex-col items-center">
+          <div className="w-full max-w-lg bg-gray-100 rounded-lg p-6 flex flex-col items-center">
             <div className="mb-4">
               {isRecording ? (
                 <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
@@ -146,15 +199,23 @@ function VoiceRecorder({ onAnalysisComplete }) {
               )}
             </div>
 
-            <div className="space-x-4">
+            <div className="space-x-4 flex flex-row">
               {!isRecording && !audioURL && (
-                <button
-                  onClick={startRecording}
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
-                  disabled={isAnalyzing}
-                >
-                  Commencer l'enregistrement
-                </button>
+                <>
+                  <button
+                    onClick={startRecording}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                    disabled={isAnalyzing}
+                  >
+                    Commencer l'enregistrement
+                  </button>
+                  <button
+                    onClick={() => setShowExamples(true)}
+                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                  >
+                    Voir les exemples
+                  </button>
+                </>
               )}
 
               {isRecording && (
@@ -208,6 +269,39 @@ function VoiceRecorder({ onAnalysisComplete }) {
           <li>Essayez d'enregistrer au moins 10-15 secondes de parole</li>
         </ul>
       </div>
+
+      {/* Modal des exemples */}
+      {showExamples && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Exemples d'enregistrements</h3>
+              <button
+                onClick={() => setShowExamples(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {exampleRecordings.map((example) => (
+                <div key={example.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
+                  <h4 className="font-medium text-gray-800 mb-2">{example.name}</h4>
+                  <p className="text-sm text-gray-600 mb-3">{example.description}</p>
+                  <button
+                    onClick={() => loadExample(example.url)}
+                    className="w-full bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md hover:bg-indigo-200 transition-colors"
+                  >
+                    Charger cet exemple
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

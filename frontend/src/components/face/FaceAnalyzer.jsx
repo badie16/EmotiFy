@@ -11,10 +11,53 @@ function FaceAnalyzer({ onAnalysisComplete }) {
   const [error, setError] = useState("")
   const [isWebcamMode, setIsWebcamMode] = useState(false)
   const [isWebcamActive, setIsWebcamActive] = useState(false)
+  const [showExamples, setShowExamples] = useState(false)
 
   const fileInputRef = useRef(null)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
+
+  const path = window.location.origin
+  const exampleImages = [
+    {
+      id: 1,
+      name: "Exemple Joyeux",
+      url: path + "/src/public/example/visage/happy.png",
+      description: "Un visage exprimant de la joie"
+    },
+    {
+      id: 2,
+      name: "Exemple Angry",
+      url: path + "/src/public/example/visage/angry.png",
+      description: "Un visage exprimant de la colère"
+    },
+    {
+      id: 3,
+      name: "Exemple Fear",
+      url: path + "/src/public/example/visage/fear.png",
+      description: "Un visage exprimant la peur"
+    },
+    {
+      id: 4,
+      name: "Exemple Mix",
+      url: path + "/src/public/example/visage/angry2.png",
+      description: "Un visage exprimant la colère et la tristesse"
+    },
+    {
+      id: 5,
+      name: "Exemple Sadness",
+      url: path + "/src/public/example/visage/sad.png",
+      description: "Un visage exprimant la tristesse"
+    }, 
+    {
+      id: 6,
+      name: "Exemple Disgust",
+      url: path + "/src/public/example/visage/disgust.png",
+      description: "Un visage exprimant la dégoût"
+    },
+   
+    
+  ]
 
   function resizeImagePreservingQuality(file, maxDimension = 1800) {
     return new Promise((resolve) => {
@@ -181,6 +224,21 @@ function FaceAnalyzer({ onAnalysisComplete }) {
     }
   }
 
+  const loadExample = async (exampleUrl) => {
+    try {
+      setError("")
+      const response = await fetch(exampleUrl)
+      const blob = await response.blob()
+      const file = new File([blob], "example.jpg", { type: "image/jpeg" })
+      setSelectedFile(file)
+      setPreviewURL(URL.createObjectURL(file))
+      setShowExamples(false)
+    } catch (err) {
+      console.error("Erreur lors du chargement de l'exemple:", err)
+      setError("Impossible de charger l'exemple. Veuillez réessayer.")
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
       <h2 className="text-xl font-semibold mb-4">Analysez les expressions faciales</h2>
@@ -228,14 +286,21 @@ function FaceAnalyzer({ onAnalysisComplete }) {
                 </div>
               )}
 
-              <div className="space-x-4 flex  mt-3 justify-center flex-wrap gap-y-[15px]">
+              <div className="space-x-4 flex mt-3 justify-center flex-wrap gap-y-[15px]">
                 <button
                   onClick={() => fileInputRef.current.click()}
                   className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
                   disabled={isAnalyzing}
                 >
                   Sélectionner une image
-                </button>              
+                </button>
+                <button
+                  onClick={() => setShowExamples(true)}
+                  className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                  disabled={isAnalyzing}
+                >
+                  Voir les exemples
+                </button>
                 {previewURL && (
                   <>
                     <button
@@ -324,6 +389,46 @@ function FaceAnalyzer({ onAnalysisComplete }) {
           <li>Évitez les accessoires qui cachent partiellement le visage (lunettes de soleil, masques, etc.)</li>
         </ul>
       </div>
+
+      {/* Modal des exemples */}
+      {showExamples && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Exemples d'images</h3>
+              <button
+                onClick={() => setShowExamples(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {exampleImages.map((example) => (
+                <div key={example.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
+                  <div className="aspect-square mb-3 overflow-hidden rounded-md">
+                    <img
+                      src={example.url}
+                      alt={example.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h4 className="font-medium text-gray-800 mb-2">{example.name}</h4>
+                  <p className="text-sm text-gray-600 mb-3">{example.description}</p>
+                  <button
+                    onClick={() => loadExample(example.url)}
+                    className="w-full bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md hover:bg-indigo-200 transition-colors"
+                  >
+                    Utiliser cet exemple
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
