@@ -3,6 +3,8 @@
 import { useState, useRef } from "react"
 import axios from "axios"
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"
+
 function VoiceRecorder({ onAnalysisComplete }) {
   const [isRecording, setIsRecording] = useState(false)
   const [audioBlob, setAudioBlob] = useState(null)
@@ -65,15 +67,48 @@ function VoiceRecorder({ onAnalysisComplete }) {
     try {
       const formData = new FormData()
       formData.append("audioFile", audioBlob, "recording.wav")
-
-      const response = await axios.post("/api/voice/analyze", formData, {
+      const response = await axios.post(API_URL + "/api/voice/analyze", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-
+      console.log("response", response)
+      const rawEmotions = response.data.emotions.emotion_scores;
       if (onAnalysisComplete) {
-        onAnalysisComplete(response.data)
+        const remapped = {
+          joy: rawEmotions.happy || 0,
+          sadness: rawEmotions.sad || 0,
+          anger: rawEmotions.angry || 0,
+          fear: rawEmotions.fear || 0,
+          // surprise: rawEmotions.surprise || 0,
+          neutral: rawEmotions.neutral || 0,
+        }
+
+        //   object : {
+        //   "id": 1,
+        //     "filePath": "1748523845372.wav",
+        //       "emotions": {
+        //     "emotion_scores": {
+        //       "angry": 0.9999998807907104,
+        //         "fear": 2.222892182823788e-11,
+        //           "happy": 4.649990809069138e-11,
+        //             "neutral": 6.97009880368249e-11,
+        //               "sad": 7.439525262498137e-8
+        //     },
+        //     "predicted_emotion": "angry",
+        //       "predicted_index": 0,
+        //         "raw_prediction_vector": [
+        //           0.9999998807907104,
+        //           2.222892182823788e-11,
+        //           4.649990809069138e-11,
+        //           6.97009880368249e-11,
+        //           7.439525262498137e-8
+        //         ]
+        //   },
+        //   "timestamp": "2025-05-29T13:04:05.961Z"
+        // }
+        console.log("emotionSums", remapped)
+        onAnalysisComplete(remapped)
       }
     } catch (err) {
       console.error("Erreur lors de l'analyse audio:", err)

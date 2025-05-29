@@ -83,7 +83,6 @@ function FaceAnalysis() {
       // S'il n'y a qu'un seul visage, utiliser directement ses émotions
       rawEmotions = result?.emotions?.faces?.[0]?.emotions || {};
     }
-    console.log(rawEmotions)
     const remapped = {
       joy: rawEmotions.happy || 0,
       sadness: rawEmotions.sad || 0,

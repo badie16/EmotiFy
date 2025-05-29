@@ -215,7 +215,7 @@ app.post("/api/analyze", (req, res) => {
 
 // Routes API
 app.use("/api/text", textRoutes);
-app.use("api/voice", voiceRoutes);
+app.use("/api/voice", voiceRoutes);
 app.use("/api/face", faceRoutes);
 
 

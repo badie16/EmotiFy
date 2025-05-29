@@ -1,54 +1,41 @@
 import express from "express"
 import path from "path"
+import fs from "fs"
 import { analyzeVoiceEmotions } from "../services/voice-service.js"
+import convertWebmToWav from "../utils/convert.js"
 
 const router = express.Router()
 
-// Analyser les émotions dans un fichier audio
 router.post("/analyze", async (req, res) => {
-  try {
-    const upload = req.app.locals.upload
-    const pool = req.app.locals.pool
+  const upload = req.app.locals.upload
+  upload.single("audioFile")(req, res, async (err) => {
+    if (err || !req.file) {
+      return res.status(400).json({ error: "Erreur lors de l'upload du fichier audio" })
+    }
 
-    // Utiliser multer pour gérer l'upload du fichier audio
-    upload.single("audioFile")(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ error: "Erreur lors de l'upload du fichier audio" })
-      }
+    const inputPath = req.file.path
+    const userId = req.body.userId || null
 
-      if (!req.file) {
-        return res.status(400).json({ error: "Fichier audio requis" })
-      }
+    try {
+      const wavPath = await convertWebmToWav(inputPath)
+      const emotions = await analyzeVoiceEmotions(wavPath)
 
-      const filePath = req.file.path
-      const userId = req.body.userId || null
+      // Nettoyage
+    
+      fs.unlinkSync(inputPath)
+      fs.unlinkSync(wavPath)
 
-      try {
-        // Analyser les émotions dans la voix
-        const emotions = await analyzeVoiceEmotions(filePath)
-
-        // Sauvegarder l'analyse dans la base de données
-        const result = await pool.query(
-          "INSERT INTO voice_analysis (file_path, emotions, user_id) VALUES ($1, $2, $3) RETURNING id",
-          [filePath, emotions, userId],
-        )
-
-        // Renvoyer les résultats
-        res.json({
-          id: result.rows[0].id,
-          filePath: path.basename(filePath),
-          emotions,
-          timestamp: new Date().toISOString(),
-        })
-      } catch (error) {
-        console.error("Erreur lors de l'analyse vocale:", error)
-        res.status(500).json({ error: "Erreur lors de l'analyse vocale" })
-      }
-    })
-  } catch (error) {
-    console.error("Erreur lors de l'analyse vocale:", error)
-    res.status(500).json({ error: "Erreur lors de l'analyse vocale" })
-  }
+      res.json({
+        id: 1,
+        filePath: path.basename(wavPath),
+        emotions,
+        timestamp: new Date().toISOString(),
+      })
+    } catch (error) {
+      console.error("Erreur lors de l'analyse vocale:", error)
+      res.status(500).json({ error: "Erreur lors de l'analyse vocale" })
+    }
+  })
 })
 
 // Récupérer l'historique des analyses vocales

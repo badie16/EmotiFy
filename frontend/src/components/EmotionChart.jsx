@@ -17,6 +17,7 @@ import { useState } from "react"
 import { emotionColors } from "../utils/colors"
 
 function EmotionChart({ emotions }) {
+  console.log("emotions", emotions)
   const [chartType, setChartType] = useState("pie")
   // Préparer les données pour les graphiques
   const data = Object.entries(emotions)

@@ -7,8 +7,8 @@ import EmotionChart from "../components/EmotionChart"
 function VoiceAnalysis() {
   const [analysisResult, setAnalysisResult] = useState(null)
 
-  const handleAnalysisComplete = (result) => {
-    setAnalysisResult(result.emotions)
+  const handleAnalysisComplete = (result) => {    
+    setAnalysisResult(result)
   }
 
   return (
