@@ -2,7 +2,7 @@ function About() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pb-16">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 mb-8">
+      <div className="relative bg-gradient-to-r h-[350px] max-h-[40%] flex items-center  from-blue-600 to-purple-600 text-white py-16 mb-8">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-blue-600 opacity-30"></div>
           {[...Array(8)].map((_, i) => (
