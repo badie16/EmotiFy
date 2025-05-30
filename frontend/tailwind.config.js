@@ -31,6 +31,16 @@ export default {
           950: "#2e1065",
         },
       },
+      animation: {
+        float: "float 6s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
+        "bounce-slow": "bounce-slow 3s ease-in-out infinite",
+        "spin-slow": "spin-slow 10s linear infinite",
+        "fade-in-up": "fade-in-up 1s ease-out forwards",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(circle, var(--tw-gradient-stops))",
+      },
     },
   },
   plugins: [],
