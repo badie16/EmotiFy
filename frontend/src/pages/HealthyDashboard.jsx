@@ -12,87 +12,105 @@ function HealthyDashboard() {
     }
 
     const MoodTrendGraph = () => (
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200/50 p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                    <span className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center mr-3">📈</span>
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-pink-200/50 p-8 hover:border-pink-300/50 transition-all duration-300">
+            <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-pink-100 to-rose-100 rounded-xl flex items-center justify-center mr-4">
+                        <span className="text-xl">📈</span>
+                    </div>
                     Évolution de votre humeur
                 </h3>
                 <select
                     value={timeRange}
                     onChange={(e) => setTimeRange(e.target.value)}
-                    className="border border-pink-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="border border-pink-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/80 backdrop-blur-sm"
                 >
                     <option value="week">Cette semaine</option>
                     <option value="month">Ce mois</option>
                 </select>
             </div>
 
-            <div className="h-64 flex items-end justify-between space-x-2">
+            <div className="h-80 flex items-end justify-between space-x-3 bg-gradient-to-t from-pink-50/50 to-transparent rounded-2xl p-6">
                 {moodData[timeRange].map((score, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center">
+                    <div key={index} className="flex-1 flex flex-col items-center group">
                         <div
-                            className={`w-full rounded-t transition-all duration-500 ${score >= 7 ? "bg-pink-400" : score >= 5 ? "bg-rose-400" : "bg-red-400"
+                            className={`w-full rounded-t-lg transition-all duration-700 hover:scale-105 shadow-lg ${score >= 7
+                                    ? "bg-gradient-to-t from-pink-400 to-pink-500"
+                                    : score >= 5
+                                        ? "bg-gradient-to-t from-rose-400 to-rose-500"
+                                        : "bg-gradient-to-t from-red-400 to-red-500"
                                 }`}
                             style={{ height: `${(score / 10) * 100}%` }}
                         ></div>
-                        <div className="text-xs text-gray-500 mt-2">
+                        <div className="text-xs text-gray-500 mt-3 font-medium">
                             {timeRange === "week" ? ["L", "M", "M", "J", "V", "S", "D"][index] : `S${index + 1}`}
                         </div>
-                        <div className="text-xs font-medium">{score}</div>
+                        <div className="text-sm font-bold text-gray-700 bg-white/80 rounded-lg px-2 py-1 mt-1">{score}</div>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-4 flex justify-center space-x-4 text-xs">
-                <div className="flex items-center">
-                    <div className="w-3 h-3 bg-pink-400 rounded mr-1"></div>
-                    <span>Bien (7-10)</span>
+            <div className="mt-6 flex justify-center space-x-6 text-sm">
+                <div className="flex items-center bg-white/60 rounded-lg px-3 py-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-pink-500 rounded mr-2"></div>
+                    <span className="font-medium">Bien (7-10)</span>
                 </div>
-                <div className="flex items-center">
-                    <div className="w-3 h-3 bg-rose-400 rounded mr-1"></div>
-                    <span>Moyen (5-6)</span>
+                <div className="flex items-center bg-white/60 rounded-lg px-3 py-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-rose-400 to-rose-500 rounded mr-2"></div>
+                    <span className="font-medium">Moyen (5-6)</span>
                 </div>
-                <div className="flex items-center">
-                    <div className="w-3 h-3 bg-red-400 rounded mr-1"></div>
-                    <span>Difficile (1-4)</span>
+                <div className="flex items-center bg-white/60 rounded-lg px-3 py-2">
+                    <div className="w-3 h-3 bg-gradient-to-r from-red-400 to-red-500 rounded mr-2"></div>
+                    <span className="font-medium">Difficile (1-4)</span>
                 </div>
             </div>
         </div>
     )
 
     const HealthTipsCard = () => (
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200/50 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center mr-3">💡</span>
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-pink-200/50 p-8 hover:border-pink-300/50 transition-all duration-300">
+            <h3 className="text-2xl font-bold text-gray-900 mb-8 flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-purple-100 rounded-xl flex items-center justify-center mr-4">
+                    <span className="text-xl">💡</span>
+                </div>
                 Conseils bien-être
             </h3>
 
-            <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border-l-4 border-blue-400">
-                    <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
-                        <span className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2 text-xs">💧</span>
+            <div className="space-y-6">
+                <div className="group bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-2xl border-l-4 border-blue-400 hover:scale-105 transition-all duration-300 shadow-lg">
+                    <h4 className="font-bold text-blue-800 mb-3 flex items-center text-lg">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <span className="text-sm">💧</span>
+                        </div>
                         Hydratation
                     </h4>
-                    <p className="text-sm text-blue-700">Buvez un verre d'eau toutes les heures pour maintenir votre énergie.</p>
-                </div>
-
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border-l-4 border-green-400">
-                    <h4 className="font-semibold text-green-800 mb-2 flex items-center">
-                        <span className="w-5 h-5 bg-green-100 rounded flex items-center justify-center mr-2 text-xs">🚶</span>
-                        Mouvement
-                    </h4>
-                    <p className="text-sm text-green-700">
-                        Faites une courte promenade de 10 minutes pour stimuler votre humeur.
+                    <p className="text-blue-700 leading-relaxed">
+                        Buvez un verre d'eau toutes les heures pour maintenir votre énergie et votre concentration.
                     </p>
                 </div>
 
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 border-purple-400">
-                    <h4 className="font-semibold text-purple-800 mb-2 flex items-center">
-                        <span className="w-5 h-5 bg-purple-100 rounded flex items-center justify-center mr-2 text-xs">😴</span>
+                <div className="group bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-2xl border-l-4 border-green-400 hover:scale-105 transition-all duration-300 shadow-lg">
+                    <h4 className="font-bold text-green-800 mb-3 flex items-center text-lg">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <span className="text-sm">🚶</span>
+                        </div>
+                        Mouvement
+                    </h4>
+                    <p className="text-green-700 leading-relaxed">
+                        Faites une courte promenade de 10 minutes pour stimuler votre humeur et votre créativité.
+                    </p>
+                </div>
+
+                <div className="group bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-l-4 border-purple-400 hover:scale-105 transition-all duration-300 shadow-lg">
+                    <h4 className="font-bold text-purple-800 mb-3 flex items-center text-lg">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <span className="text-sm">😴</span>
+                        </div>
                         Sommeil
                     </h4>
-                    <p className="text-sm text-purple-700">Essayez de vous coucher 30 minutes plus tôt ce soir.</p>
+                    <p className="text-purple-700 leading-relaxed">
+                        Essayez de vous coucher 30 minutes plus tôt ce soir pour un repos optimal.
+                    </p>
                 </div>
             </div>
         </div>
@@ -103,36 +121,44 @@ function HealthyDashboard() {
 
         if (averageMood >= 7) {
             return (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8 mb-8 shadow-xl">
                     <div className="flex items-center">
-                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4 text-2xl">✅</div>
+                        <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mr-6 shadow-lg">
+                            <span className="text-3xl">✅</span>
+                        </div>
                         <div>
-                            <h3 className="font-bold text-green-800 text-lg">Excellent moral !</h3>
-                            <p className="text-green-700">Votre humeur est stable et positive. Continuez sur cette lancée !</p>
+                            <h3 className="font-bold text-green-800 text-2xl mb-2">Excellent moral !</h3>
+                            <p className="text-green-700 text-lg">
+                                Votre humeur est stable et positive. Continuez sur cette lancée !
+                            </p>
                         </div>
                     </div>
                 </div>
             )
         } else if (averageMood >= 5) {
             return (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
+                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-8 mb-8 shadow-xl">
                     <div className="flex items-center">
-                        <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mr-4 text-2xl">⚠️</div>
+                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl flex items-center justify-center mr-6 shadow-lg">
+                            <span className="text-3xl">⚠️</span>
+                        </div>
                         <div>
-                            <h3 className="font-bold text-yellow-800 text-lg">Attention à votre bien-être</h3>
-                            <p className="text-yellow-700">Votre humeur semble en baisse. Prenez du temps pour vous.</p>
+                            <h3 className="font-bold text-yellow-800 text-2xl mb-2">Attention à votre bien-être</h3>
+                            <p className="text-yellow-700 text-lg">Votre humeur semble en baisse. Prenez du temps pour vous.</p>
                         </div>
                     </div>
                 </div>
             )
         } else {
             return (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl p-8 mb-8 shadow-xl">
                     <div className="flex items-center">
-                        <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4 text-2xl">🚨</div>
+                        <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl flex items-center justify-center mr-6 shadow-lg">
+                            <span className="text-3xl">🚨</span>
+                        </div>
                         <div>
-                            <h3 className="font-bold text-red-800 text-lg">Prenez soin de vous</h3>
-                            <p className="text-red-700">Votre moral semble difficile. N'hésitez pas à demander de l'aide.</p>
+                            <h3 className="font-bold text-red-800 text-2xl mb-2">Prenez soin de vous</h3>
+                            <p className="text-red-700 text-lg">Votre moral semble difficile. N'hésitez pas à demander de l'aide.</p>
                         </div>
                     </div>
                 </div>
@@ -142,97 +168,144 @@ function HealthyDashboard() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50">
-            {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 text-white">
-                <div className="absolute inset-0 bg-black/20"></div>
-                <div className="relative max-w-7xl mx-auto px-4 py-16">
+            {/* Hero Section - Style exact de l'image */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 text-white min-h-[500px]">
+                {/* Background Circles */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                    <div className="absolute top-40 right-20 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
+                    <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-white/8 rounded-full blur-xl"></div>
+                    <div className="absolute bottom-10 right-10 w-56 h-56 bg-white/5 rounded-full blur-2xl"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-white/3 rounded-full blur-3xl"></div>
+                </div>
+
+                <div className="relative max-w-7xl mx-auto px-4 py-20">
                     <div className="text-center">
-                        <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
-                            <span className="w-2 h-2 bg-pink-400 rounded-full mr-2 animate-pulse"></span>
-                            EmotiFy Healthy - Bien-être Personnel
+                        {/* Badge EmotiFy Healthy */}
+                        <div className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium mb-12 border border-white/30">
+                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            EmotiFy Healthy
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-pink-100 bg-clip-text text-transparent">
-                            🧘 Tableau de Bord Healthy
+
+                        {/* Main Title */}
+                        <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
+                            Tableau de{" "}
+                            <span className="bg-gradient-to-r from-pink-200 to-rose-200 bg-clip-text text-transparent">
+                                Bord
+                            </span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-pink-100 max-w-3xl mx-auto mb-8 leading-relaxed">
-                            Suivez votre bien-être émotionnel et mental au quotidien
+
+                        {/* Description */}
+                        <p className="text-xl md:text-2xl text-pink-100 max-w-4xl mx-auto mb-12 leading-relaxed">
+                            Suivez votre bien-être émotionnel et mental au quotidien avec des insights personnalisés et des recommandations adaptées.
                         </p>
+
+                        {/* Features List */}
+                        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-12">
+                            <div className="flex items-center text-pink-100">
+                                <svg className="w-5 h-5 mr-3 text-pink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span className="font-medium">Analyses en temps réel</span>
+                            </div>
+                            <div className="flex items-center text-pink-100">
+                                <svg className="w-5 h-5 mr-3 text-pink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span className="font-medium">Recommandations personnalisées</span>
+                            </div>
+                            <div className="flex items-center text-pink-100">
+                                <svg className="w-5 h-5 mr-3 text-pink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span className="font-medium">Données sécurisées</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-pink-50 to-transparent"></div>
             </div>
 
             <div className="max-w-6xl mx-auto px-4 py-12">
                 <AlertBanner />
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200/50 p-6 text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-3xl">😊</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div className="group bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-pink-200/50 p-8 text-center hover:border-pink-300/50 transition-all duration-300 hover:scale-105">
+                        <div className="w-20 h-20 bg-gradient-to-br from-pink-100 to-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                            <span className="text-4xl">😊</span>
                         </div>
-                        <div className="text-3xl font-bold text-pink-600 mb-1">7.2</div>
-                        <div className="text-sm text-gray-600">Humeur moyenne</div>
-                        <div className="mt-2 text-xs text-green-600 font-medium">+0.3 cette semaine</div>
+                        <div className="text-4xl font-bold text-pink-600 mb-2">7.2</div>
+                        <div className="text-gray-600 font-medium mb-2">Humeur moyenne</div>
+                        <div className="text-sm text-green-600 font-semibold bg-green-50 rounded-lg px-3 py-1 inline-block">
+                            +0.3 cette semaine
+                        </div>
                     </div>
 
-                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-rose-200/50 p-6 text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-3xl">📅</span>
+                    <div className="group bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-rose-200/50 p-8 text-center hover:border-rose-300/50 transition-all duration-300 hover:scale-105">
+                        <div className="w-20 h-20 bg-gradient-to-br from-rose-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                            <span className="text-4xl">📅</span>
                         </div>
-                        <div className="text-3xl font-bold text-rose-600 mb-1">12</div>
-                        <div className="text-sm text-gray-600">Jours de suivi</div>
-                        <div className="mt-2 text-xs text-blue-600 font-medium">Régularité excellente</div>
+                        <div className="text-4xl font-bold text-rose-600 mb-2">12</div>
+                        <div className="text-gray-600 font-medium mb-2">Jours de suivi</div>
+                        <div className="text-sm text-blue-600 font-semibold bg-blue-50 rounded-lg px-3 py-1 inline-block">
+                            Régularité excellente
+                        </div>
                     </div>
 
-                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-200/50 p-6 text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <span className="text-3xl">🎯</span>
+                    <div className="group bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-purple-200/50 p-8 text-center hover:border-purple-300/50 transition-all duration-300 hover:scale-105">
+                        <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                            <span className="text-4xl">🎯</span>
                         </div>
-                        <div className="text-3xl font-bold text-purple-600 mb-1">85%</div>
-                        <div className="text-sm text-gray-600">Objectifs atteints</div>
-                        <div className="mt-2 text-xs text-green-600 font-medium">+15% ce mois</div>
+                        <div className="text-4xl font-bold text-purple-600 mb-2">85%</div>
+                        <div className="text-gray-600 font-medium mb-2">Objectifs atteints</div>
+                        <div className="text-sm text-green-600 font-semibold bg-green-50 rounded-lg px-3 py-1 inline-block">
+                            +15% ce mois
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                     <MoodTrendGraph />
                     <HealthTipsCard />
                 </div>
 
                 {/* Quick Actions */}
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-pink-200/50 p-8">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                        <span className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center mr-3">🚀</span>
+                <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-pink-200/50 p-10 hover:border-pink-300/50 transition-all duration-300">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+                        <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <span className="text-2xl">🚀</span>
+                        </div>
                         Actions rapides
                     </h3>
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-6">
                         <Link
                             to="/healthy/mood-journal"
-                            className="group bg-gradient-to-r from-pink-50 to-rose-50 p-6 rounded-xl border border-pink-200 hover:shadow-lg transition-all duration-300"
+                            className="group bg-gradient-to-r from-pink-50 to-rose-50 p-8 rounded-2xl border border-pink-200 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                         >
                             <div className="flex items-center">
-                                <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                    <span className="text-2xl">📝</span>
+                                <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center mr-6 group-hover:scale-110 transition-transform shadow-lg">
+                                    <span className="text-3xl">📝</span>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Journal d'humeur</h4>
-                                    <p className="text-sm text-gray-600">Enregistrez votre état émotionnel</p>
+                                    <h4 className="font-bold text-gray-900 text-xl mb-2">Journal d'humeur</h4>
+                                    <p className="text-gray-600">Enregistrez votre état émotionnel quotidien</p>
                                 </div>
                             </div>
                         </Link>
 
                         <Link
                             to="/healthy/relaxation"
-                            className="group bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200 hover:shadow-lg transition-all duration-300"
+                            className="group bg-gradient-to-r from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-200 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                         >
                             <div className="flex items-center">
-                                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                                    <span className="text-2xl">🧘</span>
+                                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mr-6 group-hover:scale-110 transition-transform shadow-lg">
+                                    <span className="text-3xl">🧘</span>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Espace relaxation</h4>
-                                    <p className="text-sm text-gray-600">Exercices de détente et méditation</p>
+                                    <h4 className="font-bold text-gray-900 text-xl mb-2">Espace relaxation</h4>
+                                    <p className="text-gray-600">Exercices de détente et méditation guidée</p>
                                 </div>
                             </div>
                         </Link>

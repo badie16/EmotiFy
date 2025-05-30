@@ -262,7 +262,33 @@ Layla: Ghadi nji ndouz lweekend m3ak. Ma ghadi nkhlikch wahdek.`
 					</button>
 				</div>
 			</form>
-
+			<div className="mt-8 bg-orange-50 p-4 rounded-md">
+				<h3 className="font-medium text-orange-800 mb-2">
+					Signaux détectés par l'analyse
+				</h3>
+				<ul className="list-disc pl-6 text-gray-700 space-y-2">
+					<li>
+						<span className="font-medium">Détresse émotionnelle</span> -
+						Identifie les signes de tristesse, d'anxiété ou de désespoir qui
+						pourraient nécessiter un soutien.
+					</li>
+					<li>
+						<span className="font-medium">Idées suicidaires</span> - Détecte les
+						expressions qui pourraient indiquer des pensées suicidaires ou
+						d'automutilation.
+					</li>
+					<li>
+						<span className="font-medium">Harcèlement</span> - Repère les
+						schémas d'intimidation, de menaces ou de harcèlement dans les
+						conversations.
+					</li>
+					<li>
+						<span className="font-medium">Violence</span> - Identifie les
+						menaces de violence ou les discussions concernant des actes
+						violents.
+					</li>
+				</ul>
+			</div>
 			{/* Modal des exemples */}
 			{showExamples && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex  items-center justify-center z-50">
@@ -298,34 +324,6 @@ Layla: Ghadi nji ndouz lweekend m3ak. Ma ghadi nkhlikch wahdek.`
 					</div>
 				</div>
 			)}
-
-			<div className="mt-8 bg-orange-50 p-4 rounded-md">
-				<h3 className="font-medium text-orange-800 mb-2">
-					Signaux détectés par l'analyse
-				</h3>
-				<ul className="list-disc pl-6 text-gray-700 space-y-2">
-					<li>
-						<span className="font-medium">Détresse émotionnelle</span> -
-						Identifie les signes de tristesse, d'anxiété ou de désespoir qui
-						pourraient nécessiter un soutien.
-					</li>
-					<li>
-						<span className="font-medium">Idées suicidaires</span> - Détecte les
-						expressions qui pourraient indiquer des pensées suicidaires ou
-						d'automutilation.
-					</li>
-					<li>
-						<span className="font-medium">Harcèlement</span> - Repère les
-						schémas d'intimidation, de menaces ou de harcèlement dans les
-						conversations.
-					</li>
-					<li>
-						<span className="font-medium">Violence</span> - Identifie les
-						menaces de violence ou les discussions concernant des actes
-						violents.
-					</li>
-				</ul>
-			</div>
 		</div>
 	);
 }
