@@ -10,3 +10,5 @@ librosa==0.10.1
 scikit-learn==1.3.2
 soundfile==0.12.1
 joblib==1.3.2
+resampy==0.4.3
+
